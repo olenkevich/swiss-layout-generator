@@ -38,57 +38,168 @@
     --fw-medium: 500;
     --fw-bold: 600;
     
-    /* Spacing Scale - Baseline Grid */
-    --space-xs: calc(var(--baseline) * 1);  /* 8px */
-    --space-sm: calc(var(--baseline) * 2);  /* 16px */
-    --space-md: calc(var(--baseline) * 3);  /* 24px */
-    --space-lg: calc(var(--baseline) * 4);  /* 32px */
-    --space-xl: calc(var(--baseline) * 5);  /* 40px */
-    --space-xxl: calc(var(--baseline) * 6); /* 48px */
+    /* Spacing Scale - Mathematical Progression */
+    --space-xs: calc(var(--baseline) * 1);   /* 8px - Base unit */
+    --space-sm: calc(var(--baseline) * 2);   /* 16px - 2:1 */
+    --space-md: calc(var(--baseline) * 3);   /* 24px - 3:1 */
+    --space-lg: calc(var(--baseline) * 5);   /* 40px - Fibonacci */
+    --space-xl: calc(var(--baseline) * 8);   /* 64px - Fibonacci */
+    --space-xxl: calc(var(--baseline) * 13); /* 104px - Fibonacci */
+    
+    /* Swiss/German Proportional Spacing */
+    --space-golden: calc(var(--baseline) * 6.18); /* ~49px - Golden ratio * 8 */
+    --space-silver: calc(var(--baseline) * 3.31); /* ~26px - Silver ratio * 8 */
   }
 
   /* App split: left controls, right preview */
   html, body { height:100%; margin:0; font-family: Helvetica, Arial, sans-serif; }
-  .app { height:100%; display:flex; }
-
-  /* Left sidebar */
-  .sidebar {
-    width: 280px;
-    background:#f9f9f9;
-    border-right:1px solid #ccc;
-    padding:12px;
-    box-sizing:border-box;
-    display:flex; flex-direction:column; gap:10px;
-  }
-  .sidebar h3 { margin:8px 0 4px; font-size:14px }
-  .sidebar input[type=text], .sidebar select { width:100%; padding:6px; box-sizing:border-box; }
-  .sidebar input[type=file] { width:100%; }
-  .sidebar button { padding:6px; cursor:pointer; }
-  .sidebar label { display:block; margin:4px 0; font-size:12px; }
-  .sidebar input[type=color] { width:50px; height:30px; margin-left:8px; }
+  .app { height:100%; display:flex; position: relative; }
   
-  /* Block list styles */
-  #blockList { max-height: 200px; overflow-y: auto; }
+  /* Minimal analog clock */
+  .clock {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    background: white;
+    z-index: 10;
+  }
+  .clock-face {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .clock-hand {
+    position: absolute;
+    background: #333;
+    transform-origin: bottom center;
+    left: 50%;
+  }
+  .hour-hand {
+    width: 2px;
+    height: 18px;
+    top: 12px;
+    margin-left: -1px;
+  }
+  .minute-hand {
+    width: 1px;
+    height: 24px;
+    top: 6px;
+    margin-left: -0.5px;
+  }
+  .clock-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    background: #333;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Left sidebar - Minimal clean */
+  .sidebar {
+    width: 320px;
+    background: #fafafa;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex; 
+    flex-direction: column; 
+    gap: 20px;
+  }
+  .sidebar h3 { 
+    margin: 0 0 12px 0; 
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    letter-spacing: 0.5px;
+  }
+  .sidebar input[type=text], .sidebar select { 
+    width: 100%; 
+    padding: 10px; 
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    font-size: 14px;
+  }
+  .sidebar input[type=text]:focus, .sidebar select:focus {
+    outline: none;
+    border-color: #999;
+  }
+  .sidebar input[type=file] { 
+    width: 100%;
+    padding: 8px;
+  }
+  .sidebar button { 
+    padding: 10px 16px; 
+    cursor: pointer;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 2px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .sidebar button:hover {
+    background: #f5f5f5;
+    border-color: #999;
+  }
+  .sidebar label { 
+    display: block; 
+    margin: 8px 0; 
+    font-size: 12px;
+    color: #666;
+  }
+  .sidebar input[type=color] { 
+    width: 40px; 
+    height: 32px; 
+    margin-left: 8px;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+  }
+  
+  /* Block list styles - Clean minimal */
+  #blockList { 
+    max-height: 200px; 
+    overflow-y: auto;
+    border: 1px solid #eee;
+    border-radius: 2px;
+  }
   .block-item { 
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
-    padding: 4px 6px; 
-    margin: 2px 0; 
-    background: #fff; 
-    border: 1px solid #ddd; 
-    border-radius: 3px; 
-    font-size: 11px;
+    padding: 8px 12px; 
+    margin: 0; 
+    background: white; 
+    border-bottom: 1px solid #eee; 
+    font-size: 12px;
   }
-  .block-item .block-info { flex: 1; overflow: hidden; }
+  .block-item:last-child { border-bottom: none; }
+  .block-item:hover { background: #f8f8f8; }
+  .block-item .block-info { 
+    flex: 1; 
+    overflow: hidden;
+    color: #333;
+  }
   .block-item .delete-btn { 
-    background: #ff4444; 
-    color: white; 
-    border: none; 
-    padding: 2px 6px; 
+    background: #fff; 
+    color: #999; 
+    border: 1px solid #ddd;
+    padding: 4px 8px; 
     border-radius: 2px; 
     cursor: pointer; 
-    font-size: 10px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .block-item .delete-btn:hover {
+    background: #f5f5f5;
+    color: #666;
+    border-color: #999;
   }
 
   /* Color palette styles */
@@ -150,14 +261,9 @@
     min-width: 0; 
     min-height: 0; 
   }
-  
-  .row { 
-    align-items: baseline; /* TRUE typographic baseline alignment */
-  }
-  
-  .col { 
-    flex-direction: column; 
-  }
+  .col { flex-direction: column; }
+  .row-reverse { flex-direction: row-reverse; }
+  .col-reverse { flex-direction: column-reverse; }
   
   .leaf { 
     flex: 1 1 0; 
@@ -165,7 +271,9 @@
     min-height: 0; 
     padding: var(--space-md); /* 24px - generous content padding */
     overflow: hidden;
-    /* Baseline alignment now handled by .row containers */
+    display: flex;
+    align-items: flex-end; /* Align to baseline for proper text alignment */
+    justify-content: center;
   }
   
   /* Swiss Typography Styles */
@@ -176,7 +284,8 @@
     overflow-wrap: normal; 
     color: var(--ink);
     text-align: left;
-    /* True baseline alignment handled by .row containers */
+    padding-bottom: var(--space-sm); /* 16px consistent baseline offset */
+    /* Baseline alignment will be set by fitText function */
   }
   
   .text[data-type="header"] { 
@@ -201,10 +310,16 @@
   
   .image { 
     width: 100%; 
-    height: 100%; /* Restore full height */
+    height: calc(100% - var(--space-sm)); /* Account for baseline padding */
     object-fit: cover; 
     display: block; 
-    /* Baseline alignment handled by .row containers */
+    padding-bottom: var(--space-sm); /* Same 16px baseline offset as text */
+  }
+  
+  .image.preserve-aspect {
+    object-fit: contain;
+    height: auto;
+    max-height: calc(100% - var(--space-sm));
   }
   
   /* Legacy logo class - updated with Swiss principles */
@@ -214,14 +329,55 @@
     color: var(--accent);
     text-transform: uppercase;
     letter-spacing: var(--ls-tight);
-    /* True baseline alignment handled by .row containers */
+    padding-bottom: var(--space-sm); /* 16px consistent baseline offset */
   }
 </style>
 </head>
 <body>
 <div class="app">
+  <!-- Minimal analog clock -->
+  <div class="clock">
+    <div class="clock-face">
+      <div class="clock-hand hour-hand" id="hour-hand"></div>
+      <div class="clock-hand minute-hand" id="minute-hand"></div>
+      <div class="clock-center"></div>
+    </div>
+  </div>
+  
   <!-- Left controls -->
   <div class="sidebar">
+    <!-- AI Generation -->
+    <h3>AI Generate</h3>
+    <input id="aiPrompt" type="text" placeholder="Describe what you want to create...">
+    
+    <label style="margin-top: 12px;">Image Style:</label>
+    <select id="styleSelect" onchange="handleStyleChange()">
+      <option value="b7f1e039-5fb5-47fa-b46e-d886bc87e36c">Style 1</option>
+      <option value="402084c3-fbb5-4fe1-8a32-ecdfd3463a39">Style 2</option>
+      <option value="72b21ce1-77f0-466e-877a-c3c6bb708e0c">Style 3</option>
+      <option value="e85e0f16-e82e-4053-8080-ffd55fa8ecb6">Style 4</option>
+      <option value="226190a0-5c43-4e0c-98a0-1a4ba63800cd">Style 5</option>
+      <option value="41501ef8-26a6-4d1c-946c-d8b659ff11c3">Style 6</option>
+      <option value="custom">Custom Style ID</option>
+    </select>
+    <input id="customStyleId" type="text" placeholder="Enter custom style ID..." style="display: none; margin-top: 8px;">
+    
+    <button onclick="generateWithAI()" id="generateBtn" style="background: #007acc; color: white; border: 1px solid #007acc; margin-bottom: 12px;">Generate with AI</button>
+    
+    <!-- Loading and status indicator -->
+    <div id="aiStatus" style="display: none; padding: 8px; background: #f0f8ff; border: 1px solid #b3d9ff; border-radius: 4px; font-size: 12px; color: #0066cc; margin-bottom: 8px;">
+      <div id="statusText">Preparing...</div>
+      <div id="statusProgress" style="background: #e6f3ff; height: 4px; border-radius: 2px; margin-top: 4px; overflow: hidden;">
+        <div id="progressBar" style="height: 100%; background: #007acc; width: 0%; transition: width 0.3s ease;"></div>
+      </div>
+    </div>
+    
+    <!-- Error display -->
+    <div id="aiError" style="display: none; padding: 8px; background: #fff0f0; border: 1px solid #ffb3b3; border-radius: 4px; font-size: 12px; color: #cc0000; margin-bottom: 8px;">
+      <div id="errorText"></div>
+      <button onclick="retryGeneration()" id="retryBtn" style="margin-top: 6px; padding: 4px 8px; font-size: 11px; background: white; border: 1px solid #cc0000; color: #cc0000; border-radius: 2px; cursor: pointer;">Retry</button>
+    </div>
+    
     <h3>Add Text Block</h3>
     <input id="textContent" type="text" placeholder="Enter text content">
     <select id="textType">
@@ -233,12 +389,9 @@
     <button onclick="addTextBlock()">Add Text</button>
 
     <h3>Add Image</h3>
-    <input id="imageFile" type="file" accept="image/*">
-    <select id="imageSize">
-      <option value="large">Large</option>
-      <option value="small">Small</option>
-    </select>
-    <button onclick="addImageBlock()">Add Image</button>
+    <input id="imageFile" type="file" accept="image/*" onchange="addImageBlock()">
+    <label><input id="useImageColors" type="checkbox" checked> Use image colors</label>
+    <label><input id="preserveAspect" type="checkbox"> Preserve aspect ratio</label>
 
     <h3>Current Blocks</h3>
     <div id="blockList"></div>
@@ -252,16 +405,19 @@
     </select>
 
     <h3>Colors</h3>
-    <label>Background: <input id="bgColor" type="color" value="#ffffff"></label>
-    <label>Text: <input id="textColor" type="color" value="#111111"></label>
-    <label>Accent: <input id="accentColor" type="color" value="#111111"></label>
-    <button onclick="applyColors()">Apply Colors</button>
-    <button onclick="shuffleColors()" id="shuffleBtn" disabled>Shuffle Colors</button>
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span style="font-size: 12px;">BG:</span>
+      <input id="bgColor" type="color" value="#ffffff" onchange="applyColors()" style="width: 32px; height: 28px;">
+      <span style="font-size: 12px;">Text:</span>
+      <input id="textColor" type="color" value="#111111" onchange="applyColors()" style="width: 32px; height: 28px;">
+      <span style="font-size: 12px;">Accent:</span>
+      <input id="accentColor" type="color" value="#111111" onchange="applyColors()" style="width: 32px; height: 28px;">
+    </div>
+    <button onclick="shuffleColors()" id="shuffleBtn" disabled style="padding: 10px; font-size: 14px; width: 100%; margin-bottom: 8px;">Shuffle Colors</button>
     <div id="colorPalette" style="display:none;"></div>
 
     <h3>Actions</h3>
-    <button onclick="render()">Recompose</button>
-    <button onclick="resetAll()">Reset All</button>
+    <button onclick="render()" style="padding: 16px; font-size: 15px; font-weight: 600; width: 100%; background: #333; color: white; border: 1px solid #333;">Recompose</button>
   </div>
 
   <!-- Right preview -->
@@ -297,15 +453,15 @@ const SCALE = {
   caption: 14     // Fine print - compact but readable
 };
 
-// Typography Properties - Swiss Simplicity (3 weights max)
+// Typography Properties - Swiss/German/Soviet Hierarchy
 const TYPE_PROPS = {
-  header: { weight: 500, lineHeight: 1.1, letterSpacing: '-0.02em' },     // Medium for headers
-  subheader: { weight: 400, lineHeight: 1.2, letterSpacing: '-0.01em' },  // Regular
-  body: { weight: 400, lineHeight: 1.4, letterSpacing: '0' },             // Regular
-  logo: { weight: 400, lineHeight: 1.1, letterSpacing: '-0.01em' },       // Regular
-  lead: { weight: 400, lineHeight: 1.3, letterSpacing: '-0.005em' },      // Regular
-  small: { weight: 400, lineHeight: 1.5, letterSpacing: '0.01em' },       // Regular
-  caption: { weight: 400, lineHeight: 1.5, letterSpacing: '0.05em' }      // Regular
+  header: { weight: 600, lineHeight: 1.1, letterSpacing: '-0.03em' },     // Bold for impact
+  subheader: { weight: 500, lineHeight: 1.2, letterSpacing: '-0.015em' }, // Medium hierarchy
+  body: { weight: 400, lineHeight: 1.4, letterSpacing: '0' },             // Regular readability
+  logo: { weight: 500, lineHeight: 1.1, letterSpacing: '-0.02em' },       // Medium brand presence
+  lead: { weight: 450, lineHeight: 1.3, letterSpacing: '-0.01em' },       // Slightly bold intro
+  small: { weight: 400, lineHeight: 1.5, letterSpacing: '0.015em' },      // Regular with space
+  caption: { weight: 400, lineHeight: 1.5, letterSpacing: '0.05em' }      // Extended fine print
 };
 
 const BASELINE = 8;
@@ -342,49 +498,109 @@ function addTextBlock(){
 
 function addImageBlock(){
   const file = document.getElementById("imageFile").files[0];
-  const size = document.getElementById("imageSize").value;
   
   if(!file) {
-    alert('Please select an image file');
-    return;
+    return; // No file selected, do nothing
   }
   
   const id = (crypto.randomUUID) ? crypto.randomUUID() : ("id-"+Math.random().toString(36).slice(2));
   const imageSrc = URL.createObjectURL(file);
+  const preserveAspect = document.getElementById("preserveAspect").checked;
   
   blocks.push({
     id, 
     type: 'image', 
     src: imageSrc, 
-    size
+    size: 'large',
+    preserveAspect: preserveAspect
   });
   
-  document.getElementById("imageFile").value = '';
   updateBlockList();
   render();
   
-  // Extract beautiful color palette from the uploaded image
-  extractBeautifulPalette(imageSrc).then(palette => {
-    extractedPalette = palette;
-    colorCombinations = createBeautifulCombinations(palette);
-    currentColorIndex = 0;
-    
-    console.log('Generated', colorCombinations.length, 'color combinations');
-    displayColorPalette();
-    if (colorCombinations.length > 0) {
-      applyColorCombination(0);
-      document.getElementById('shuffleBtn').disabled = false;
-    }
-  }).catch(err => {
-    console.log('Color extraction failed:', err.message);
-    resetColorSystem();
-  });
+  // Check if "Use image colors" is enabled
+  const useImageColors = document.getElementById("useImageColors").checked;
+  
+  if (useImageColors) {
+    // Extract beautiful color palette from the uploaded image
+    extractBeautifulPalette(imageSrc).then(palette => {
+      extractedPalette = palette;
+      colorCombinations = createBeautifulCombinations(palette);
+      currentColorIndex = 0;
+      
+      console.log('Generated', colorCombinations.length, 'color combinations');
+      displayColorPalette();
+      if (colorCombinations.length > 0) {
+        applyColorCombination(0);
+        document.getElementById('shuffleBtn').disabled = false;
+      }
+    }).catch(err => {
+      console.log('Color extraction failed:', err.message);
+      resetColorSystem();
+    });
+  }
 }
 
 function deleteBlock(blockId){
   blocks = blocks.filter(b => b.id !== blockId);
   updateBlockList();
   render();
+}
+
+function handleStyleChange() {
+  const styleSelect = document.getElementById('styleSelect');
+  const customStyleInput = document.getElementById('customStyleId');
+  
+  if (styleSelect.value === 'custom') {
+    customStyleInput.style.display = 'block';
+  } else {
+    customStyleInput.style.display = 'none';
+  }
+}
+
+// Loading state management functions
+function showLoadingState(message, progress = 0) {
+  const statusDiv = document.getElementById('aiStatus');
+  const statusText = document.getElementById('statusText');
+  const progressBar = document.getElementById('progressBar');
+  const errorDiv = document.getElementById('aiError');
+  
+  statusDiv.style.display = 'block';
+  errorDiv.style.display = 'none';
+  statusText.textContent = message;
+  progressBar.style.width = `${progress}%`;
+}
+
+function hideLoadingState() {
+  const statusDiv = document.getElementById('aiStatus');
+  statusDiv.style.display = 'none';
+}
+
+function showError(message, canRetry = true) {
+  const errorDiv = document.getElementById('aiError');
+  const errorText = document.getElementById('errorText');
+  const retryBtn = document.getElementById('retryBtn');
+  const statusDiv = document.getElementById('aiStatus');
+  
+  statusDiv.style.display = 'none';
+  errorDiv.style.display = 'block';
+  errorText.textContent = message;
+  retryBtn.style.display = canRetry ? 'inline-block' : 'none';
+}
+
+function hideError() {
+  const errorDiv = document.getElementById('aiError');
+  errorDiv.style.display = 'none';
+}
+
+// Store last prompt for retry functionality
+let lastGenerationPrompt = '';
+
+function retryGeneration() {
+  if (lastGenerationPrompt) {
+    document.getElementById('aiPrompt').value = lastGenerationPrompt;
+    generateWithAI();
+  }
 }
 
 function updateBlockList(){
@@ -436,11 +652,35 @@ function render(){
     scaleToPreview();
     return;
   }
-  const shuffled=[...blocks].sort(()=>Math.random()-0.5);
-  const dir=getSmartDirection(blocks);
+  
+  // Layout direction - content agnostic for true randomization
+  let dir;
+  if (blocks.length === 2) {
+    // Equal chance for both directions regardless of content
+    dir = Math.random() < 0.5 ? 'row' : 'col';
+  } else {
+    // 3+ items use smart direction based on layout aesthetics
+    dir = getSmartDirection(blocks);
+  }
+  
+  // Random shuffle - headers can appear anywhere
+  const shuffled = [...blocks];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  
   const tree=subdivide(shuffled,dir);
   canvas.appendChild(renderNode(tree));
-  requestAnimationFrame(()=>{ recalcAllText(); scaleToPreview(); });
+  requestAnimationFrame(()=>{ 
+    scaleToPreview(); 
+    // Allow layout to settle before text fitting
+    requestAnimationFrame(() => {
+      recalcAllText();
+      // Double-check after micro-delay for random ratio layouts
+      setTimeout(() => recalcAllText(), 10);
+    });
+  });
 }
 
 // Smart direction selection based on content
@@ -470,9 +710,17 @@ function getSmartDirection(blocks) {
 
 // Smart ratio selection based on content importance
 function getSmartRatio(items, hasHero) {
-  // Hero content gets prominent space (golden ratio)
+  // Swiss/German mathematical ratios
+  const GOLDEN = 0.618;      // φ - Golden ratio
+  const SILVER = 0.414;      // √2-1 - Silver ratio  
+  const PERFECT_FIFTH = 0.6; // 3:5 - Musical harmony
+  const FIBONACCI_MAJOR = 0.618; // 8:13 Fibonacci
+  const FIBONACCI_MINOR = 0.382; // 5:13 Fibonacci
+  
+  // Hero content gets prominent space
   if (hasHero) {
-    return 0.618; // Golden ratio for elegant hierarchy
+    const heroRatios = [GOLDEN, SILVER + 0.2, PERFECT_FIFTH];
+    return heroRatios[Math.floor(Math.random() * heroRatios.length)];
   }
   
   // Check content types for intelligent sizing
@@ -480,22 +728,42 @@ function getSmartRatio(items, hasHero) {
   const hasHeaders = items.some(item => item.type === 'header');
   const textItems = items.filter(item => ['header', 'subheader', 'body'].includes(item.type));
   
-  // Header + content combinations get clear hierarchy
-  if (hasHeaders && items.length > 1) {
-    return 0.67; // 2:1 ratio for clear but not extreme hierarchy
-  }
+  // Content-agnostic ratios - equal chance for any content to dominate
+  const allRatios = [
+    0.5,                    // Equal split
+    GOLDEN,                 // 0.618 - Golden ratio
+    1 - GOLDEN,             // 0.382 - Inverse golden
+    0.67,                   // 2:1 ratio
+    0.33,                   // 1:2 ratio  
+    PERFECT_FIFTH,          // 0.6 - Musical harmony
+    1 - PERFECT_FIFTH,      // 0.4 - Inverse
+    SILVER + 0.2,           // 0.614 - Silver variation
+    FIBONACCI_MINOR + 0.12  // 0.502 - Near equal
+  ];
   
-  // Image-heavy layouts get balanced splits
-  if (hasImages && items.length <= 3) {
-    return 0.618; // Golden ratio for visual harmony
-  }
-  
-  // Equal split for balanced democratic layouts
-  return 0.5;
+  return allRatios[Math.floor(Math.random() * allRatios.length)];
 }
 
 function subdivide(items,dir){
   if(items.length===1) return {kind:"leaf",item:items[0]};
+  
+  // For 2 items, create more layout variations
+  if(items.length === 2) {
+    const hero=items.some(it=>it.hero);
+    const ratios = hero ? 
+      [0.65, 0.7, 0.6, 0.75] : // Hero variations
+      [0.5, 0.618, 0.382, 0.55, 0.45, 0.6, 0.4]; // Non-hero variations
+    const ratio = ratios[Math.floor(Math.random() * ratios.length)];
+    
+    // Random ratio assignment - either item can get the larger space
+    const flip = Math.random() < 0.5;
+    
+    return {kind:"split",direction:dir,ratio,
+      a:{kind:"leaf",item:items[flip ? 1 : 0]},
+      b:{kind:"leaf",item:items[flip ? 0 : 1]}};
+  }
+  
+  // Use standard subdivision for all items
   const hero=items.some(it=>it.hero);
   let ratio=getSmartRatio(items, hero);
   const sizeA=Math.max(1,Math.min(items.length-1,Math.round(items.length*ratio)));
@@ -514,7 +782,10 @@ function renderNode(node){
       el.appendChild(t);
     }
     if(node.item.type==="image"){
-      const img=document.createElement("img"); img.className="image"; img.src=node.item.src; el.appendChild(img);
+      const img=document.createElement("img"); 
+      img.className = node.item.preserveAspect ? "image preserve-aspect" : "image";
+      img.src=node.item.src; 
+      el.appendChild(img);
     }
     if(node.item.type==="logo"){
       const t=document.createElement("div"); t.className="logo"; t.textContent=node.item.content; el.appendChild(t);
@@ -522,8 +793,14 @@ function renderNode(node){
     return el;
   }
   const wrap=document.createElement("div"); wrap.className=node.direction==="row"?"row":"col";
-  const a=document.createElement("div"); a.className=node.direction==="row"?"col":"row"; a.style.flex=node.ratio;
-  const b=document.createElement("div"); b.className=node.direction==="row"?"col":"row"; b.style.flex=1-node.ratio;
+  
+  // Simple random ratio assignment
+  const flip = Math.random() < 0.5;
+  const ratioA = flip ? node.ratio : 1-node.ratio;
+  const ratioB = flip ? 1-node.ratio : node.ratio;
+  
+  const a=document.createElement("div"); a.className=node.direction==="row"?"row":"col"; a.style.flex=ratioA;
+  const b=document.createElement("div"); b.className=node.direction==="row"?"row":"col"; b.style.flex=ratioB;
   a.appendChild(renderNode(node.a)); b.appendChild(renderNode(node.b));
   wrap.appendChild(a); wrap.appendChild(b); return wrap;
 }
@@ -532,6 +809,12 @@ function renderNode(node){
 function fitText(container, el, item) {
   const maxW = container.offsetWidth;
   const maxH = container.offsetHeight;
+  
+  // Safety check - if container has no dimensions, skip fitting
+  if (maxW <= 0 || maxH <= 0) {
+    console.warn('Container has no dimensions, skipping text fitting');
+    return;
+  }
   
   // Get base size and properties for this type
   let fontSize = SCALE[item.type] || SCALE.body;
@@ -551,25 +834,40 @@ function fitText(container, el, item) {
     );
     el.style.lineHeight = baselineAlignedHeight + 'px';
     
-    // Optical corrections for different sizes
+    // Swiss/German optical corrections with contextual awareness
     if (fontSize >= 48) {
-      // Large display text - tighter spacing
-      el.style.letterSpacing = 'calc(' + props.letterSpacing + ' - 0.01em)';
+      // Large display text - aggressive tightening for impact
+      el.style.letterSpacing = 'calc(' + props.letterSpacing + ' - 0.02em)';
+    } else if (fontSize >= 32) {
+      // Medium headers - moderate tightening
+      el.style.letterSpacing = 'calc(' + props.letterSpacing + ' - 0.005em)';
     } else if (fontSize <= 18) {
-      // Small text - looser spacing for legibility
-      el.style.letterSpacing = 'calc(' + props.letterSpacing + ' + 0.02em)';
+      // Small text - expanded for legibility (Soviet influence)
+      el.style.letterSpacing = 'calc(' + props.letterSpacing + ' + 0.025em)';
+    }
+    
+    // Contextual adjustments based on container size
+    const containerArea = maxW * maxH;
+    if (containerArea < 10000) {
+      // Tight spaces - compress slightly more
+      el.style.letterSpacing = 'calc(' + el.style.letterSpacing + ' - 0.005em)';
     }
   };
   
   applyTypography();
   
-  // Swiss precision - maintain hierarchy while fitting
-  const minSize = Math.max(12, fontSize * 0.6); // Never go below 60% or 12px
+  // Swiss precision - maintain hierarchy while fitting, more flexible for headers
+  const isHeader = item.type === 'header';
+  const minSize = isHeader ? 
+    Math.max(14, fontSize * 0.45) :  // Headers can shrink more but stay readable
+    Math.max(12, fontSize * 0.6);   // Other text maintains stricter limits
   let guard = 100;
   
-  while (guard-- > 0 && 
-         (el.scrollWidth > maxW || el.scrollHeight > maxH) && 
-         fontSize > minSize) {
+  while (guard-- > 0 && fontSize > minSize) {
+    // More precise overflow detection with padding buffer
+    const isOverflowing = el.scrollWidth > (maxW - 4) || el.scrollHeight > (maxH - 4);
+    if (!isOverflowing) break;
+    
     fontSize = Math.max(minSize, fontSize - 1);
     applyTypography();
   }
@@ -1125,6 +1423,304 @@ function toggle(d){ return d==='row' ? 'col' : 'row'; }
 
 /* Keep preview correct on resize */
 window.addEventListener("resize", scaleToPreview);
+
+// Minimal analog clock
+function updateClock() {
+  const now = new Date();
+  const hours = now.getHours() % 12;
+  const minutes = now.getMinutes();
+  
+  const hourAngle = (hours * 30) + (minutes * 0.5); // 30 degrees per hour + minute offset
+  const minuteAngle = minutes * 6; // 6 degrees per minute
+  
+  document.getElementById('hour-hand').style.transform = `translateX(-50%) rotate(${hourAngle}deg)`;
+  document.getElementById('minute-hand').style.transform = `translateX(-50%) rotate(${minuteAngle}deg)`;
+}
+
+// Update clock every second
+setInterval(updateClock, 1000);
+updateClock(); // Initial call
+
+// AI Generation Functions
+async function generateWithAI() {
+  const prompt = document.getElementById('aiPrompt').value.trim();
+  if (!prompt) {
+    showError('Please enter a description for what you want to create.', false);
+    return;
+  }
+  
+  // Store prompt for retry functionality
+  lastGenerationPrompt = prompt;
+  
+  const generateBtn = document.getElementById('generateBtn');
+  generateBtn.disabled = true;
+  hideError();
+  
+  try {
+    showLoadingState('Preparing generation...', 10);
+    
+    // Clear existing blocks
+    blocks = [];
+    updateBlockList();
+    
+    showLoadingState('Generating text content with AI...', 25);
+    
+    // Step 1: Generate text content and image prompt with DeepSeek
+    let textResponse;
+    try {
+      textResponse = await generateTextWithDeepSeek(prompt);
+      console.log('DeepSeek response:', textResponse);
+    } catch (error) {
+      console.error('DeepSeek error:', error);
+      throw new Error('Failed to generate text content. The AI text service may be unavailable.');
+    }
+    
+    showLoadingState('Processing generated content...', 40);
+    
+    // Parse the response to extract header, body, and image prompt
+    const content = parseAIResponse(textResponse);
+    
+    if (!content.header && !content.body && !content.subheader) {
+      throw new Error('Generated content appears to be empty or invalid. Please try a different prompt.');
+    }
+    
+    showLoadingState('Creating layout elements...', 55);
+    
+    // Step 2: Add text blocks to layout dynamically
+    let blockId = Date.now();
+    
+    if (content.header) {
+      blocks.push({
+        id: blockId++,
+        type: 'header',
+        content: content.header
+      });
+    }
+    
+    if (content.subheader) {
+      blocks.push({
+        id: blockId++,
+        type: 'subheader',
+        content: content.subheader
+      });
+    }
+    
+    if (content.body) {
+      blocks.push({
+        id: blockId++,
+        type: 'body', 
+        content: content.body
+      });
+    }
+    
+    if (content.caption) {
+      blocks.push({
+        id: blockId++,
+        type: 'body',  // Use body type for captions
+        content: content.caption
+      });
+    }
+    
+    if (content.logo) {
+      blocks.push({
+        id: blockId++,
+        type: 'logo',
+        content: content.logo
+      });
+    }
+    
+    showLoadingState('Generating professional advertisement image...', 70);
+    
+    // Step 3: Generate image with Recraft - use original user prompt for best ad image
+    const adImagePrompt = `Create a professional, eye-catching advertisement image for: ${prompt}`;
+    
+    let imageUrl;
+    try {
+      imageUrl = await generateImageWithRecraft(adImagePrompt);
+    } catch (error) {
+      console.error('Image generation error:', error);
+      // Don't fail the entire generation if image fails
+      console.warn('Continuing without image due to generation error');
+    }
+    
+    showLoadingState('Finalizing layout...', 85);
+    
+    if (imageUrl) {
+      // Add image block
+      blocks.push({
+        id: Date.now() + 3,
+        type: 'image',
+        src: imageUrl,
+        preserveAspect: false
+      });
+      
+      // Extract colors from the generated image
+      setTimeout(() => {
+        extractColorsFromGeneratedImage(imageUrl);
+      }, 1000);
+    }
+    
+    // Update UI and render
+    updateBlockList();
+    render();
+    
+    showLoadingState('Complete!', 100);
+    setTimeout(() => {
+      hideLoadingState();
+    }, 1500);
+    
+  } catch (error) {
+    console.error('AI generation error:', error);
+    
+    // Provide user-friendly error messages based on error type
+    let errorMessage = 'An unexpected error occurred. Please try again.';
+    
+    if (error.message.includes('Failed to generate text content')) {
+      errorMessage = 'The AI text service is currently unavailable. Please try again in a moment.';
+    } else if (error.message.includes('empty or invalid')) {
+      errorMessage = 'The AI couldn\'t generate content for that prompt. Try a more specific description.';
+    } else if (error.message.includes('fetch')) {
+      errorMessage = 'Network connection error. Please check your internet and try again.';
+    } else if (error.message.includes('API error')) {
+      errorMessage = 'AI service error. The service may be temporarily unavailable.';
+    }
+    
+    showError(errorMessage, true);
+  } finally {
+    generateBtn.disabled = false;
+    // Don't clear the prompt so user can retry or modify it
+  }
+}
+
+async function generateTextWithDeepSeek(prompt) {
+  try {
+    const response = await fetch('/api/generate-text', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ prompt })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`DeepSeek API error (${response.status}): ${errorData.error || 'Unknown error'}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.content || data.content.trim().length === 0) {
+      throw new Error('DeepSeek returned empty content');
+    }
+    
+    return data.content;
+  } catch (error) {
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error('Network error: Could not connect to text generation service');
+    }
+    throw error;
+  }
+}
+
+async function generateImageWithRecraft(imagePrompt) {
+  try {
+    // Get selected style ID from UI
+    const styleSelect = document.getElementById('styleSelect');
+    const customStyleInput = document.getElementById('customStyleId');
+    
+    let styleId = styleSelect.value;
+    if (styleId === 'custom' && customStyleInput.value.trim()) {
+      styleId = customStyleInput.value.trim();
+    }
+    
+    const response = await fetch('/api/generate-image', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        prompt: imagePrompt,
+        styleId: styleId 
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Recraft API error (${response.status}): ${errorData.error || 'Image generation failed'}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.imageUrl) {
+      throw new Error('Recraft returned no image URL');
+    }
+    
+    return data.imageUrl;
+  } catch (error) {
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error('Network error: Could not connect to image generation service');
+    }
+    console.error('Image generation error:', error);
+    throw error;
+  }
+}
+
+function parseAIResponse(response) {
+  const content = {
+    header: '',
+    subheader: '',
+    body: '',
+    caption: '',
+    logo: '',
+    imagePrompt: ''
+  };
+  
+  const lines = response.split('\n');
+  
+  lines.forEach(line => {
+    const trimmedLine = line.trim();
+    if (!trimmedLine) return;
+    
+    if (trimmedLine.startsWith('HEADER:')) {
+      content.header = trimmedLine.replace('HEADER:', '').trim();
+    } else if (trimmedLine.startsWith('SUBHEADER:')) {
+      content.subheader = trimmedLine.replace('SUBHEADER:', '').trim();
+    } else if (trimmedLine.startsWith('BODY:')) {
+      content.body = trimmedLine.replace('BODY:', '').trim();
+    } else if (trimmedLine.startsWith('CAPTION:')) {
+      content.caption = trimmedLine.replace('CAPTION:', '').trim();
+    } else if (trimmedLine.startsWith('LOGO:')) {
+      content.logo = trimmedLine.replace('LOGO:', '').trim();
+    } else if (trimmedLine.startsWith('IMAGE:')) {
+      content.imagePrompt = trimmedLine.replace('IMAGE:', '').trim();
+    }
+  });
+  
+  return content;
+}
+
+async function extractColorsFromGeneratedImage(imageUrl) {
+  try {
+    const colors = await extractColorsFromImage(imageUrl);
+    if (colors && colors.length > 0) {
+      const palette = createContrastPalette(colors);
+      
+      // Apply the extracted colors
+      document.getElementById('bgColor').value = palette.bg;
+      document.getElementById('textColor').value = palette.text;
+      if (palette.accent) {
+        document.getElementById('accentColor').value = palette.accent;
+      }
+      
+      applyColors();
+      
+      // Enable shuffle colors button
+      document.getElementById('shuffleBtn').disabled = false;
+    }
+  } catch (error) {
+    console.error('Color extraction error:', error);
+  }
+}
 
 /* Init */
 setFormat(document.getElementById("format").value);
