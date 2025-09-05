@@ -1,0 +1,36 @@
+{
+  "style_id": "b7f1e039-5fb5-47fa-b46e-d886bc87e36c",
+  "size": "1024x1024",
+  "response_format": "url",
+  "style_ids_available": [
+    {
+      "id": "b7f1e039-5fb5-47fa-b46e-d886bc87e36c",
+      "name": "Style 1"
+    },
+    {
+      "id": "402084c3-fbb5-4fe1-8a32-ecdfd3463a39", 
+      "name": "Style 2"
+    },
+    {
+      "id": "72b21ce1-77f0-466e-877a-c3c6bb708e0c",
+      "name": "Style 3"
+    },
+    {
+      "id": "e85e0f16-e82e-4053-8080-ffd55fa8ecb6",
+      "name": "Style 4"
+    },
+    {
+      "id": "226190a0-5c43-4e0c-98a0-1a4ba63800cd",
+      "name": "Style 5"
+    },
+    {
+      "id": "41501ef8-26a6-4d1c-946c-d8b659ff11c3",
+      "name": "Style 6"
+    }
+  ],
+  "sizes_available": [
+    "1024x1024",
+    "1024x1792", 
+    "1792x1024"
+  ]
+}

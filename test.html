@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Baseline Alignment Test</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 2rem;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .wrapper {
+      display: inline-flex;
+      align-items: baseline; /* align to the true typographic baseline */
+      gap: 1rem;
+      border-bottom: 1px dashed red; /* baseline guide */
+      padding-bottom: 0.5rem;
+    }
+
+    .wrapper span {
+      display: inline-block;
+    }
+
+    .f1 { font-size: 12px; font-family: Arial, sans-serif; }
+    .f2 { font-size: 24px; font-family: Georgia, serif; }
+    .f3 { font-size: 48px; font-family: "Courier New", monospace; }
+    .f4 { font-size: 32px; font-family: "Times New Roman", serif; }
+  </style>
+</head>
+<body>
+
+  <h2>Baseline Alignment Test</h2>
+  <p>All words below should sit on the same typographic baseline (red dashed line).</p>
+
+  <div class="wrapper">
+    <span class="f1">Hello</span>
+    <span class="f2">world</span>
+    <span class="f3">CSS</span>
+    <span class="f4">Typography</span>
+  </div>
+
+</body>
+</html>
