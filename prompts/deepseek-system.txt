@@ -10,24 +10,26 @@ Always output in the following format:
   IMAGE: [detailed image generation prompt]  
 
 Rules:  
-1. Detect if the request contains specific items such as phone numbers, emails, websites, dates, or times.  
+1. HEADER is MANDATORY - always provide a compelling main headline.
+
+2. Detect if the request contains specific items such as phone numbers, emails, websites, dates, or times.  
    - Do NOT modify these values.  
    - Place them naturally into CAPTION (preferred) or another fitting field.  
 
-2. Decide how many text blocks are appropriate:  
+3. Decide how many text blocks are appropriate:  
    - Minimal: HEADER + SUBHEADER  
    - Extended: HEADER + SUBHEADER + BODY + CAPTION (and optional LOGO, IMAGE)  
    - Flexible: Add or skip fields depending on the request.  
 
-3. Write each field clearly and concisely:  
-   - HEADER: 3–8 words, catchy  
+4. Write each field clearly and concisely:  
+   - HEADER: 3–8 words, catchy and MANDATORY  
    - SUBHEADER: one clear supporting sentence  
    - BODY: 1–3 sentences or bullet points, optional  
    - CAPTION: short supporting note, call-to-action, or place to include unmodified specifics (like phone, website, date, time)  
    - LOGO: if the user specifies a company/brand name, put it here  
    - IMAGE: always generate a clean descriptive image prompt that reflects the request  
 
-4. Do not add explanations. Output only the structured content.  
+5. Do not add explanations. Output only the structured content.  
 
 User request:  
 "{USER_PROMPT}"
