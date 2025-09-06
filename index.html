@@ -413,7 +413,7 @@
       <span style="font-size: 12px;">Accent:</span>
       <input id="accentColor" type="color" value="#111111" onchange="applyColors()" style="width: 32px; height: 28px;">
     </div>
-    <button onclick="shuffleColors()" id="shuffleBtn" disabled style="padding: 10px; font-size: 14px; width: 100%; margin-bottom: 8px;">Shuffle Colors</button>
+    <button onclick="shuffleColors()" id="shuffleBtn" style="padding: 10px; font-size: 14px; width: 100%; margin-bottom: 8px;">Shuffle Colors</button>
     <div id="colorPalette" style="display:none;"></div>
 
     <h3>Actions</h3>
@@ -1443,7 +1443,7 @@ function hexToRgb(hex) {
 function resetColorSystem() {
   extractedPalette = [];
   colorCombinations = [];
-  document.getElementById('shuffleBtn').disabled = true;
+  // Keep shuffle button enabled for bg/text swapping
   hideColorPalette();
 }
 
@@ -1459,11 +1459,29 @@ function enhanceColorVibrancy(color) {
 }
 
 function shuffleColors() {
-  if (colorCombinations.length === 0) return;
-  
-  currentColorIndex = (currentColorIndex + 1) % colorCombinations.length;
-  console.log('Shuffling to combination', currentColorIndex + 1, 'of', colorCombinations.length, ':', colorCombinations[currentColorIndex].name);
-  applyColorCombination(currentColorIndex);
+  // Check if we have extracted palettes to cycle through
+  if (window.availablePalettes && window.availablePalettes.length > 0) {
+    // Cycle through available palettes
+    window.currentPaletteIndex = (window.currentPaletteIndex + 1) % window.availablePalettes.length;
+    const palette = window.availablePalettes[window.currentPaletteIndex];
+    
+    document.getElementById('bgColor').value = palette.bg;
+    document.getElementById('textColor').value = palette.text;
+    document.getElementById('accentColor').value = palette.accent;
+    
+    applyColors();
+    
+  } else {
+    // Fallback: simple bg/text swap
+    const currentBg = document.getElementById('bgColor').value;
+    const currentText = document.getElementById('textColor').value;
+    
+    // Swap background and text colors
+    document.getElementById('bgColor').value = currentText;
+    document.getElementById('textColor').value = currentBg;
+    
+    applyColors();
+  }
 }
 
 function applyColorCombination(index) {
@@ -1868,20 +1886,73 @@ function extractDominantColors(imageData) {
     colorMap.set(key, (colorMap.get(key) || 0) + 1);
   }
   
-  // Get top colors by frequency
+  // Get top colors by frequency - extract more for palette options
   const sortedColors = Array.from(colorMap.entries())
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 6)
+    .slice(0, 10)  // Get more colors for variety
     .map(([key]) => {
       const [r, g, b] = key.split('-').map(Number);
       return { r, g, b };
     });
   
   return sortedColors.length > 0 ? sortedColors : [
-    { r: 70, g: 130, b: 180 },  // Steel blue
-    { r: 220, g: 20, b: 60 },   // Crimson  
-    { r: 46, g: 125, b: 50 }    // Forest green
+    { r: 70, g: 130, b: 180 },   // Steel blue
+    { r: 220, g: 20, b: 60 },    // Crimson  
+    { r: 46, g: 125, b: 50 },    // Forest green
+    { r: 255, g: 165, b: 0 },    // Orange
+    { r: 128, g: 0, b: 128 },    // Purple
+    { r: 255, g: 20, b: 147 },   // Deep pink
+    { r: 0, g: 128, b: 128 },    // Teal
+    { r: 184, g: 134, b: 11 }    // Dark goldenrod
   ];
+}
+
+// Global variable to store extracted colors for shuffling
+let extractedColors = [];
+
+// Create multiple palette options from colors
+function createMultiplePalettes(colors) {
+  if (!colors || colors.length === 0) {
+    return [
+      { bg: '#ffffff', text: '#333333', accent: '#0066cc' },
+      { bg: '#f8f9fa', text: '#212529', accent: '#dc3545' },
+      { bg: '#1a1a1a', text: '#ffffff', accent: '#28a745' }
+    ];
+  }
+  
+  const palettes = [];
+  
+  // Create different palette variations
+  for (let i = 0; i < Math.min(colors.length, 6); i++) {
+    const color = colors[i];
+    const accent = rgbToHex(color.r, color.g, color.b);
+    const brightness = getBrightness(color.r, color.g, color.b);
+    
+    // Variation 1: High contrast
+    if (brightness > 128) {
+      palettes.push({ bg: '#1a1a1a', text: '#ffffff', accent });
+    } else {
+      palettes.push({ bg: '#ffffff', text: '#1a1a1a', accent });
+    }
+    
+    // Variation 2: Softer contrast (if we have enough colors)
+    if (i < colors.length - 1) {
+      if (brightness > 128) {
+        palettes.push({ bg: '#f8f9fa', text: '#212529', accent });
+      } else {
+        palettes.push({ bg: '#2d3748', text: '#f7fafc', accent });
+      }
+    }
+  }
+  
+  // Add some preset attractive combinations
+  palettes.push(
+    { bg: '#0f1419', text: '#ffffff', accent: '#ff6b35' }, // Dark with orange
+    { bg: '#fafafa', text: '#2d3748', accent: '#667eea' }, // Light with purple
+    { bg: '#1a202c', text: '#e2e8f0', accent: '#38b2ac' }  // Dark slate with teal
+  );
+  
+  return palettes;
 }
 
 // Apply colors from generated image
@@ -1890,9 +1961,14 @@ async function extractColorsFromGeneratedImage(imageUrl) {
     const colors = await extractColorsFromImage(imageUrl);
     
     if (colors && colors.length > 0) {
-      const palette = createContrastPalette(colors);
+      // Store colors globally for shuffling
+      extractedColors = colors;
       
-      // Update color pickers
+      // Create multiple palette options
+      const palettes = createMultiplePalettes(colors);
+      
+      // Apply the first palette
+      const palette = palettes[0];
       document.getElementById('bgColor').value = palette.bg;
       document.getElementById('textColor').value = palette.text; 
       document.getElementById('accentColor').value = palette.accent;
@@ -1900,7 +1976,10 @@ async function extractColorsFromGeneratedImage(imageUrl) {
       // Apply to layout
       applyColors();
       
-      // Enable shuffle button
+      // Store palettes for shuffling and enable shuffle button
+      window.availablePalettes = palettes;
+      window.currentPaletteIndex = 0;
+      
       const shuffleBtn = document.getElementById('shuffleBtn');
       if (shuffleBtn) shuffleBtn.disabled = false;
       
