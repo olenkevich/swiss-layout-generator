@@ -31,7 +31,7 @@ export default async function handler(req, res) {
     const systemPrompt = getDeepSeekPrompt(prompt);
     console.log('Generated system prompt length:', systemPrompt.length);
     
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    const response = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
