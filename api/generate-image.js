@@ -21,6 +21,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Image prompt is required' });
   }
   
+  // Use default style if none provided or invalid
+  const defaultStyleId = 'b7f1e039-5fb5-47fa-b46e-d886bc87e36c';
+  const finalStyleId = styleId || defaultStyleId;
+  
   try {
     if (!process.env.RECRAFT_API_KEY) {
       throw new Error('RECRAFT_API_KEY environment variable is not set');
@@ -36,14 +40,22 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         prompt: prompt,
-        style_id: styleId || config.style_id,
+        style_id: finalStyleId,
         size: config.size,
         response_format: config.response_format
       })
     });
     
     if (!response.ok) {
-      throw new Error(`Recraft API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Recraft API error details:', errorText);
+      
+      // Handle specific error cases with user-friendly messages
+      if (errorText.includes('not_enough_credits')) {
+        throw new Error('Image generation temporarily unavailable (insufficient credits). Please try again later.');
+      }
+      
+      throw new Error(`Recraft API error: ${response.status} - ${errorText}`);
     }
     
     const data = await response.json();
