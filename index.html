@@ -833,6 +833,9 @@ function fitText(container, el, item) {
     el.style.fontWeight = props.weight;
     el.style.letterSpacing = props.letterSpacing;
     
+    // Temporary debug
+    console.log(`Text: "${item.content?.substring(0, 20)}..." Type: ${item.type} Final size: ${fontSize}px (original: ${originalSize}px)`);
+    
     // Calculate line height with baseline grid alignment
     const rawLineHeight = fontSize * props.lineHeight;
     const baselineAlignedHeight = Math.max(
@@ -1506,7 +1509,7 @@ async function generateWithAI() {
     if (content.header) {
       console.log('Adding header block:', content.header);
       blocks.push({
-        id: blockId++,
+        id: `ai-header-${blockId++}`,
         type: 'header',
         content: content.header
       });
