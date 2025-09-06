@@ -1482,6 +1482,18 @@ async function generateWithAI() {
     
     console.log('Parsed AI content:', content);
     
+    // Temporary debug: show parsed content on page
+    const debugDiv = document.createElement('div');
+    debugDiv.id = 'debug-content';
+    debugDiv.style.cssText = 'position:fixed;top:10px;right:10px;background:yellow;padding:10px;font-size:12px;z-index:9999;max-width:300px;';
+    debugDiv.innerHTML = `<strong>Parsed Content:</strong><br>
+      Header: "${content.header}"<br>
+      Subheader: "${content.subheader}"<br>
+      Body: "${content.body}"<br>
+      Caption: "${content.caption}"<br>
+      Image: "${content.imagePrompt}"`;
+    document.body.appendChild(debugDiv);
+    
     if (!content.header && !content.body && !content.subheader) {
       throw new Error('Generated content appears to be empty or invalid. Please try a different prompt.');
     }
@@ -1490,6 +1502,7 @@ async function generateWithAI() {
     
     // Step 2: Add text blocks to layout dynamically
     let blockId = Date.now();
+    const beforeBlockCount = blocks.length;
     
     if (content.header) {
       console.log('Adding header block:', content.header);
@@ -1567,6 +1580,12 @@ async function generateWithAI() {
         // Continue without colors if extraction fails
       }
     }
+    
+    // Debug: show blocks info
+    const addedBlocks = blocks.length - beforeBlockCount;
+    debugDiv.innerHTML += `<br><strong>Blocks created:</strong> ${addedBlocks}<br>
+      <strong>Total blocks:</strong> ${blocks.length}<br>
+      <strong>Block types:</strong> ${blocks.slice(-addedBlocks).map(b => b.type).join(', ')}`;
     
     // Update UI and render
     updateBlockList();
