@@ -1076,140 +1076,79 @@ function createBeautifulPalette(colors) {
   return palette;
 }
 
+// Clean RGB to Hex conversion - no debugging, simple and reliable
+function rgbToHex(r, g, b) {
+  // Handle both object and individual parameters
+  if (typeof r === 'object') {
+    const color = r;
+    r = color.r;
+    g = color.g;
+    b = color.b;
+  }
+  
+  // Ensure valid numbers
+  r = Math.round(Math.max(0, Math.min(255, Number(r) || 0)));
+  g = Math.round(Math.max(0, Math.min(255, Number(g) || 0))); 
+  b = Math.round(Math.max(0, Math.min(255, Number(b) || 0)));
+  
+  return '#' + 
+    r.toString(16).padStart(2, '0') +
+    g.toString(16).padStart(2, '0') +
+    b.toString(16).padStart(2, '0');
+}
+
+// Simple color brightness calculation
+function getBrightness(r, g, b) {
+  if (typeof r === 'object') {
+    const color = r;
+    r = color.r;
+    g = color.g; 
+    b = color.b;
+  }
+  return (r * 299 + g * 587 + b * 114) / 1000;
+}
+
+// Create palette from extracted colors
 function createContrastPalette(colors) {
-  console.log('Creating palette from colors:', colors);
-  
   if (!colors || colors.length === 0) {
-    console.warn('No colors provided, using fallback');
-    return { bg: '#f8fafc', text: '#1e293b', accent: '#0ea5e9' };
+    return { bg: '#ffffff', text: '#000000', accent: '#0066cc' };
   }
   
-  // Ensure we have color objects with r,g,b properties
-  const rgbColors = colors.map(color => {
-    if (Array.isArray(color)) {
-      return { r: color[0], g: color[1], b: color[2] };
+  // Find the most vibrant color for accent
+  let bestColor = colors[0];
+  let maxSaturation = 0;
+  
+  for (const color of colors) {
+    const r = color.r || 0;
+    const g = color.g || 0;
+    const b = color.b || 0;
+    
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const saturation = max === 0 ? 0 : (max - min) / max;
+    
+    if (saturation > maxSaturation) {
+      maxSaturation = saturation;
+      bestColor = color;
     }
-    return { r: color.r, g: color.g, b: color.b };
-  });
-  
-  // Find the most vibrant and suitable colors
-  const sortedColors = rgbColors
-    .map(color => ({
-      ...color,
-      brightness: (color.r * 299 + color.g * 587 + color.b * 114) / 1000,
-      saturation: getSaturation(color)
-    }))
-    .filter(color => color.saturation > 10) // Filter out very desaturated colors
-    .sort((a, b) => b.saturation - a.saturation);
-  
-  console.log('Processed colors:', sortedColors);
-  
-  // If no vibrant colors, use fallback
-  if (sortedColors.length === 0) {
-    console.warn('No vibrant colors found, using fallback');
-    return { bg: '#f8fafc', text: '#1e293b', accent: '#0ea5e9' };
   }
   
-  // Get a vibrant color for accent
-  const accentColor = sortedColors[0];
-  console.log('Selected accent color:', accentColor);
+  const accent = rgbToHex(bestColor.r, bestColor.g, bestColor.b);
+  const brightness = getBrightness(bestColor.r, bestColor.g, bestColor.b);
   
-  // Create contrasting background and text colors
-  const isDarkAccent = accentColor.brightness < 128;
-  
-  let bgColor, textColor;
-  
-  if (isDarkAccent) {
-    // Dark accent -> light background, dark text
-    bgColor = { r: 248, g: 250, b: 252 }; // Very light gray
-    textColor = { r: 30, g: 41, b: 59 }; // Dark slate
+  // Create contrasting background and text
+  let bg, text;
+  if (brightness > 128) {
+    // Light accent - use dark background  
+    bg = '#1a1a1a';
+    text = '#ffffff';
   } else {
-    // Light accent -> find a darker color or use dark default
-    const darkColor = sortedColors.find(c => c.brightness < 80);
-    if (darkColor) {
-      bgColor = { r: Math.max(20, darkColor.r - 30), g: Math.max(20, darkColor.g - 30), b: Math.max(20, darkColor.b - 30) };
-      textColor = { r: 248, g: 250, b: 252 };
-    } else {
-      bgColor = { r: 15, g: 23, b: 42 }; // Dark slate
-      textColor = { r: 248, g: 250, b: 252 }; // Light
-    }
+    // Dark accent - use light background
+    bg = '#ffffff'; 
+    text = '#1a1a1a';
   }
   
-  // Ensure we pass clean color objects to rgbToHex
-  const cleanAccentColor = { 
-    r: Number(accentColor.r) || 0, 
-    g: Number(accentColor.g) || 0, 
-    b: Number(accentColor.b) || 0 
-  };
-  const cleanBgColor = { 
-    r: Number(bgColor.r) || 0, 
-    g: Number(bgColor.g) || 0, 
-    b: Number(bgColor.b) || 0 
-  };
-  const cleanTextColor = { 
-    r: Number(textColor.r) || 0, 
-    g: Number(textColor.g) || 0, 
-    b: Number(textColor.b) || 0 
-  };
-  
-  console.log('Clean colors for hex conversion:', { cleanAccentColor, cleanBgColor, cleanTextColor });
-  
-  const result = {
-    bg: rgbToHex(cleanBgColor),
-    text: rgbToHex(cleanTextColor),
-    accent: rgbToHex(cleanAccentColor)
-  };
-  
-  console.log('Final palette:', result);
-  return result;
-}
-
-function getSaturation(color) {
-  const max = Math.max(color.r, color.g, color.b);
-  const min = Math.min(color.r, color.g, color.b);
-  return max === 0 ? 0 : (max - min) / max * 100;
-}
-
-function rgbToHex(color) {
-  console.log('rgbToHex INPUT:', color, typeof color);
-  
-  const toHex = (n) => {
-    console.log('toHex converting:', n, 'type:', typeof n);
-    // Ensure n is a valid number
-    const num = Number(n);
-    if (typeof num !== 'number' || isNaN(num)) {
-      console.error('Invalid number for hex conversion:', n, 'converted to:', num);
-      return '00';
-    }
-    const value = Math.round(Math.max(0, Math.min(255, num)));
-    const hex = value.toString(16).padStart(2, '0');
-    console.log('toHex result:', n, '->', hex);
-    return hex;
-  };
-  
-  // Extract r, g, b values with extensive debugging
-  let r, g, b;
-  
-  if (color && typeof color === 'object') {
-    r = Number(color.r) || 0;
-    g = Number(color.g) || 0; 
-    b = Number(color.b) || 0;
-    console.log('Extracted RGB:', { r, g, b });
-  } else {
-    console.error('Invalid color object:', color);
-    return '#000000';
-  }
-  
-  // Final validation
-  r = isNaN(r) ? 0 : r;
-  g = isNaN(g) ? 0 : g;
-  b = isNaN(b) ? 0 : b;
-  
-  console.log('Final RGB values:', { r, g, b });
-  
-  const result = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-  console.log('rgbToHex FINAL RESULT:', result);
-  return result;
+  return { bg, text, accent };
 }
 
 function createHarmonicPalette(colors) {
@@ -1861,6 +1800,7 @@ function parseAIResponse(response) {
   return content;
 }
 
+// Clean image color extraction
 function extractColorsFromImage(imageSrc) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -1870,11 +1810,25 @@ function extractColorsFromImage(imageSrc) {
       try {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = img.width;
-        canvas.height = img.height;
         
-        ctx.drawImage(img, 0, 0);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        // Resize for faster processing
+        const maxSize = 200;
+        let { width, height } = img;
+        if (width > maxSize || height > maxSize) {
+          if (width > height) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          } else {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        const imageData = ctx.getImageData(0, 0, width, height);
         const colors = extractDominantColors(imageData);
         resolve(colors);
       } catch (error) {
@@ -1887,95 +1841,82 @@ function extractColorsFromImage(imageSrc) {
   });
 }
 
+// Extract dominant colors from image data
 function extractDominantColors(imageData) {
   const data = imageData.data;
-  const colorCount = {};
+  const colorMap = new Map();
   
-  // Sample more frequently for better color detection
+  // Sample every 4th pixel for speed
   for (let i = 0; i < data.length; i += 16) {
     const r = data[i];
-    const g = data[i + 1];
+    const g = data[i + 1]; 
     const b = data[i + 2];
-    const alpha = data[i + 3];
+    const a = data[i + 3];
     
-    if (alpha < 128) continue; // Skip transparent pixels
+    // Skip transparent or near-transparent pixels
+    if (a < 128) continue;
     
-    // Skip very dark colors (likely black/near-black)
-    if (r < 20 && g < 20 && b < 20) continue;
+    // Skip very dark or very light pixels
+    if ((r < 30 && g < 30 && b < 30) || (r > 225 && g > 225 && b > 225)) continue;
     
-    // Skip very light colors (likely white/near-white) 
-    if (r > 235 && g > 235 && b > 235) continue;
+    // Round to nearest 32 to group similar colors
+    const rKey = Math.round(r / 32) * 32;
+    const gKey = Math.round(g / 32) * 32;
+    const bKey = Math.round(b / 32) * 32;
+    const key = `${rKey}-${gKey}-${bKey}`;
     
-    // Group similar colors with smaller buckets for more precision
-    const rBucket = Math.floor(r / 16) * 16;
-    const gBucket = Math.floor(g / 16) * 16;
-    const bBucket = Math.floor(b / 16) * 16;
-    
-    const colorKey = `${rBucket},${gBucket},${bBucket}`;
-    colorCount[colorKey] = (colorCount[colorKey] || 0) + 1;
+    colorMap.set(key, (colorMap.get(key) || 0) + 1);
   }
   
-  // Sort by frequency and return top colors, filtering out low-frequency colors
-  const sortedColors = Object.entries(colorCount)
-    .filter(([, count]) => count > 5) // Only colors that appear at least 5 times
+  // Get top colors by frequency
+  const sortedColors = Array.from(colorMap.entries())
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 8) // Get more colors to choose from
-    .map(([color, count]) => {
-      const [r, g, b] = color.split(',').map(Number);
-      return { r, g, b, count };
+    .slice(0, 6)
+    .map(([key]) => {
+      const [r, g, b] = key.split('-').map(Number);
+      return { r, g, b };
     });
   
-  console.log('Color extraction analysis:', sortedColors);
-  
-  // If no good colors found, return some defaults
-  if (sortedColors.length === 0) {
-    return [
-      { r: 59, g: 130, b: 246 },  // Blue
-      { r: 239, g: 68, b: 68 },   // Red
-      { r: 34, g: 197, b: 94 }    // Green
-    ];
-  }
-  
-  return sortedColors;
+  return sortedColors.length > 0 ? sortedColors : [
+    { r: 70, g: 130, b: 180 },  // Steel blue
+    { r: 220, g: 20, b: 60 },   // Crimson  
+    { r: 46, g: 125, b: 50 }    // Forest green
+  ];
 }
 
+// Apply colors from generated image
 async function extractColorsFromGeneratedImage(imageUrl) {
   try {
-    console.log('Starting color extraction from:', imageUrl);
     const colors = await extractColorsFromImage(imageUrl);
-    console.log('Extracted colors:', colors);
     
     if (colors && colors.length > 0) {
       const palette = createContrastPalette(colors);
-      console.log('Generated palette:', palette);
       
-      // Apply the extracted colors
+      // Update color pickers
       document.getElementById('bgColor').value = palette.bg;
-      document.getElementById('textColor').value = palette.text;
-      if (palette.accent) {
-        document.getElementById('accentColor').value = palette.accent;
-      }
+      document.getElementById('textColor').value = palette.text; 
+      document.getElementById('accentColor').value = palette.accent;
       
+      // Apply to layout
       applyColors();
       
-      // Enable shuffle colors button
-      document.getElementById('shuffleBtn').disabled = false;
+      // Enable shuffle button
+      const shuffleBtn = document.getElementById('shuffleBtn');
+      if (shuffleBtn) shuffleBtn.disabled = false;
+      
     } else {
-      console.warn('No colors extracted, using fallback');
-      // Use fallback colors if extraction fails
-      const fallback = { bg: '#f8fafc', text: '#1e293b', accent: '#0ea5e9' };
-      document.getElementById('bgColor').value = fallback.bg;
-      document.getElementById('textColor').value = fallback.text;
-      document.getElementById('accentColor').value = fallback.accent;
+      // Fallback colors
+      document.getElementById('bgColor').value = '#ffffff';
+      document.getElementById('textColor').value = '#333333';
+      document.getElementById('accentColor').value = '#0066cc';
       applyColors();
     }
   } catch (error) {
-    console.error('Color extraction error:', error);
-    // Use fallback colors on error
-    const fallback = { bg: '#ffffff', text: '#000000', accent: '#007acc' };
-    document.getElementById('bgColor').value = fallback.bg;
-    document.getElementById('textColor').value = fallback.text;
-    document.getElementById('accentColor').value = fallback.accent;
+    console.error('Color extraction failed:', error);
+    // Safe fallback
+    document.getElementById('bgColor').value = '#ffffff';
+    document.getElementById('textColor').value = '#333333'; 
+    document.getElementById('accentColor').value = '#0066cc';
     applyColors();
   }
 }
