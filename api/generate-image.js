@@ -51,6 +51,6 @@ export default async function handler(req, res) {
     
   } catch (error) {
     console.error('Image generation error:', error);
-    res.status(500).json({ error: 'Failed to generate image' });
+    res.status(500).json({ error: `Failed to generate image: ${error.message}` });
   }
 }
