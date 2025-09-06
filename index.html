@@ -821,11 +821,10 @@ function fitText(container, el, item) {
   let fontSize = originalSize;
   const props = TYPE_PROPS[item.type] || TYPE_PROPS.body;
   
-  // Preserve hierarchy - don't scale headers below 75% of original
-  const minSizeRatio = item.type === 'header' ? 0.75 : 
-                       item.type === 'subheader' ? 0.8 : 
-                       item.type === 'logo' ? 0.8 : 0.6;
-  const hierarchyMinSize = Math.floor(originalSize * minSizeRatio);
+  // Preserve hierarchy - don't scale headers below a reasonable minimum
+  const hierarchyMinSize = item.type === 'header' ? 40 : 
+                           item.type === 'subheader' ? 24 : 
+                           item.type === 'logo' ? 30 : 14;
   
   // Apply Swiss design principles
   const applyTypography = () => {
