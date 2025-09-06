@@ -817,8 +817,15 @@ function fitText(container, el, item) {
   }
   
   // Get base size and properties for this type
-  let fontSize = SCALE[item.type] || SCALE.body;
+  const originalSize = SCALE[item.type] || SCALE.body;
+  let fontSize = originalSize;
   const props = TYPE_PROPS[item.type] || TYPE_PROPS.body;
+  
+  // Preserve hierarchy - don't scale headers below 75% of original
+  const minSizeRatio = item.type === 'header' ? 0.75 : 
+                       item.type === 'subheader' ? 0.8 : 
+                       item.type === 'logo' ? 0.8 : 0.6;
+  const hierarchyMinSize = Math.floor(originalSize * minSizeRatio);
   
   // Apply Swiss design principles
   const applyTypography = () => {
@@ -868,7 +875,7 @@ function fitText(container, el, item) {
     const isOverflowing = el.scrollWidth > (maxW - 4) || el.scrollHeight > (maxH - 4);
     if (!isOverflowing) break;
     
-    fontSize = Math.max(minSize, fontSize - 1);
+    fontSize = Math.max(hierarchyMinSize, fontSize - 1);
     applyTypography();
   }
   
@@ -1482,17 +1489,9 @@ async function generateWithAI() {
     
     console.log('Parsed AI content:', content);
     
-    // Temporary debug: show parsed content on page
-    const debugDiv = document.createElement('div');
-    debugDiv.id = 'debug-content';
-    debugDiv.style.cssText = 'position:fixed;top:10px;right:10px;background:yellow;padding:10px;font-size:12px;z-index:9999;max-width:300px;';
-    debugDiv.innerHTML = `<strong>Parsed Content:</strong><br>
-      Header: "${content.header}"<br>
-      Subheader: "${content.subheader}"<br>
-      Body: "${content.body}"<br>
-      Caption: "${content.caption}"<br>
-      Image: "${content.imagePrompt}"`;
-    document.body.appendChild(debugDiv);
+    // Remove any existing debug box
+    const existingDebug = document.getElementById('debug-content');
+    if (existingDebug) existingDebug.remove();
     
     if (!content.header && !content.body && !content.subheader) {
       throw new Error('Generated content appears to be empty or invalid. Please try a different prompt.');
@@ -1580,12 +1579,6 @@ async function generateWithAI() {
         // Continue without colors if extraction fails
       }
     }
-    
-    // Debug: show blocks info
-    const addedBlocks = blocks.length - beforeBlockCount;
-    debugDiv.innerHTML += `<br><strong>Blocks created:</strong> ${addedBlocks}<br>
-      <strong>Total blocks:</strong> ${blocks.length}<br>
-      <strong>Block types:</strong> ${blocks.slice(-addedBlocks).map(b => b.type).join(', ')}`;
     
     // Update UI and render
     updateBlockList();
