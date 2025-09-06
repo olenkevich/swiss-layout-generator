@@ -22,7 +22,11 @@ export default async function handler(req, res) {
   }
   
   try {
+    console.log('Starting text generation for prompt:', prompt);
+    console.log('API Key present:', !!process.env.DEEPSEEK_API_KEY);
+    
     const systemPrompt = getDeepSeekPrompt(prompt);
+    console.log('Generated system prompt length:', systemPrompt.length);
     
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
@@ -41,15 +45,21 @@ export default async function handler(req, res) {
       })
     });
     
+    console.log('DeepSeek API response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error(`DeepSeek API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('DeepSeek API error response:', errorText);
+      throw new Error(`DeepSeek API error: ${response.status} - ${errorText}`);
     }
     
     const data = await response.json();
+    console.log('DeepSeek API success, response length:', data.choices[0].message.content.length);
     res.status(200).json({ content: data.choices[0].message.content });
     
   } catch (error) {
-    console.error('Text generation error:', error);
-    res.status(500).json({ error: 'Failed to generate text' });
+    console.error('Text generation error:', error.message);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ error: `Failed to generate text: ${error.message}` });
   }
 }
