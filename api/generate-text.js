@@ -24,6 +24,9 @@ export default async function handler(req, res) {
   try {
     console.log('Starting text generation for prompt:', prompt);
     console.log('API Key present:', !!process.env.DEEPSEEK_API_KEY);
+    console.log('API Key length:', process.env.DEEPSEEK_API_KEY ? process.env.DEEPSEEK_API_KEY.length : 0);
+    console.log('API Key first 10 chars:', process.env.DEEPSEEK_API_KEY ? process.env.DEEPSEEK_API_KEY.substring(0, 10) : 'undefined');
+    console.log('All env vars keys:', Object.keys(process.env).filter(k => k.includes('DEEPSEEK')));
     
     const systemPrompt = getDeepSeekPrompt(prompt);
     console.log('Generated system prompt length:', systemPrompt.length);
