@@ -348,7 +348,7 @@
   <div class="sidebar">
     <!-- AI Generation -->
     <h3>AI Generate</h3>
-    <input id="aiPrompt" type="text" placeholder="Describe what you want to create...">
+    <input id="aiPrompt" type="text" placeholder="Design a minimalist concert poster for jazz festival with vintage typography" value="Design a minimalist concert poster for jazz festival with vintage typography">
     
     <label style="margin-top: 12px;">Image Style:</label>
     <select id="styleSelect" onchange="handleStyleChange()">
@@ -1554,10 +1554,15 @@ async function generateWithAI() {
         preserveAspect: false
       });
       
-      // Extract colors from the generated image
-      setTimeout(() => {
-        extractColorsFromGeneratedImage(imageUrl);
-      }, 1000);
+      showLoadingState('Extracting colors from image...', 90);
+      
+      // Extract colors from the generated image BEFORE rendering
+      try {
+        await extractColorsFromGeneratedImage(imageUrl);
+      } catch (error) {
+        console.error('Color extraction failed:', error);
+        // Continue without colors if extraction fails
+      }
     }
     
     // Update UI and render
@@ -1594,6 +1599,7 @@ async function generateWithAI() {
 
 async function generateTextWithDeepSeek(prompt) {
   try {
+    
     const response = await fetch('/api/generate-text', {
       method: 'POST',
       headers: {
@@ -1624,6 +1630,7 @@ async function generateTextWithDeepSeek(prompt) {
 
 async function generateImageWithRecraft(imagePrompt) {
   try {
+    
     // Get selected style ID from UI
     const styleSelect = document.getElementById('styleSelect');
     const customStyleInput = document.getElementById('customStyleId');
