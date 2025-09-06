@@ -101,16 +101,43 @@
     transform: translate(-50%, -50%);
   }
 
-  /* Left sidebar - Minimal clean */
+  /* Main app layout */
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .app {
+    display: flex;
+    height: 100vh;
+  }
+  
+  /* Left sidebar - Scrollable only */
   .sidebar {
     width: 320px;
     background: #fafafa;
     border-right: 1px solid #ddd;
     padding: 20px;
     box-sizing: border-box;
+    overflow-y: auto;
+    height: 100vh;
     display: flex; 
     flex-direction: column; 
     gap: 20px;
+  }
+  
+  /* Right preview area - Fixed, no scroll */
+  .preview {
+    flex: 1;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
   }
   .sidebar h3 { 
     margin: 0 0 12px 0; 
@@ -346,6 +373,15 @@
   
   <!-- Left controls -->
   <div class="sidebar">
+    <!-- Format at the top -->
+    <h3>Format</h3>
+    <select id="format">
+      <option value="16-9" selected>16:9</option>
+      <option value="1-1">1:1</option>
+      <option value="a4">A4 Portrait</option>
+      <option value="a4landscape">A4 Landscape</option>
+    </select>
+    
     <!-- AI Generation -->
     <h3>AI Generate</h3>
     <input id="aiPrompt" type="text" placeholder="Design a minimalist concert poster for jazz festival with vintage typography" value="Design a minimalist concert poster for jazz festival with vintage typography">
@@ -363,6 +399,10 @@
     <input id="customStyleId" type="text" placeholder="Enter custom style ID..." style="display: none; margin-top: 8px;">
     
     <button onclick="generateWithAI()" id="generateBtn" style="background: #007acc; color: white; border: 1px solid #007acc; margin-bottom: 12px;">Generate with AI</button>
+    
+    <!-- Action buttons right after generate -->
+    <button onclick="render()" style="padding: 16px; font-size: 15px; font-weight: 600; width: 100%; background: #333; color: white; border: 1px solid #333; margin-bottom: 8px;">Recompose</button>
+    <button onclick="shuffleColors()" id="shuffleBtn" style="padding: 10px; font-size: 14px; width: 100%; margin-bottom: 8px;">Shuffle Colors</button>
     
     <!-- Loading and status indicator -->
     <div id="aiStatus" style="display: none; padding: 8px; background: #f0f8ff; border: 1px solid #b3d9ff; border-radius: 4px; font-size: 12px; color: #0066cc; margin-bottom: 8px;">
@@ -396,14 +436,6 @@
     <h3>Current Blocks</h3>
     <div id="blockList"></div>
 
-    <h3>Format</h3>
-    <select id="format">
-      <option value="16-9" selected>16:9</option>
-      <option value="1-1">1:1</option>
-      <option value="a4">A4 Portrait</option>
-      <option value="a4landscape">A4 Landscape</option>
-    </select>
-
     <h3>Colors</h3>
     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
       <span style="font-size: 12px;">BG:</span>
@@ -413,11 +445,7 @@
       <span style="font-size: 12px;">Accent:</span>
       <input id="accentColor" type="color" value="#111111" onchange="applyColors()" style="width: 32px; height: 28px;">
     </div>
-    <button onclick="shuffleColors()" id="shuffleBtn" style="padding: 10px; font-size: 14px; width: 100%; margin-bottom: 8px;">Shuffle Colors</button>
     <div id="colorPalette" style="display:none;"></div>
-
-    <h3>Actions</h3>
-    <button onclick="render()" style="padding: 16px; font-size: 15px; font-weight: 600; width: 100%; background: #333; color: white; border: 1px solid #333;">Recompose</button>
   </div>
 
   <!-- Right preview -->
