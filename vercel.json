@@ -1,4 +1,12 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "functions": {
+    "api/generate-text.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/generate-image.js": {
+      "runtime": "nodejs18.x"
+    }
+  }
 }
