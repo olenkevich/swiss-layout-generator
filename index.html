@@ -1599,6 +1599,7 @@ async function generateWithAI() {
 
 async function generateTextWithDeepSeek(prompt) {
   try {
+    
     const response = await fetch('/api/generate-text', {
       method: 'POST',
       headers: {
@@ -1629,6 +1630,7 @@ async function generateTextWithDeepSeek(prompt) {
 
 async function generateImageWithRecraft(imagePrompt) {
   try {
+    
     // Get selected style ID from UI
     const styleSelect = document.getElementById('styleSelect');
     const customStyleInput = document.getElementById('customStyleId');
