@@ -1480,6 +1480,8 @@ async function generateWithAI() {
     // Parse the response to extract header, body, and image prompt
     const content = parseAIResponse(textResponse);
     
+    console.log('Parsed AI content:', content);
+    
     if (!content.header && !content.body && !content.subheader) {
       throw new Error('Generated content appears to be empty or invalid. Please try a different prompt.');
     }
@@ -1490,6 +1492,7 @@ async function generateWithAI() {
     let blockId = Date.now();
     
     if (content.header) {
+      console.log('Adding header block:', content.header);
       blocks.push({
         id: blockId++,
         type: 'header',
