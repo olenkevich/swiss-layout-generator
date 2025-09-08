@@ -93,15 +93,9 @@ export function updateBlockList(blocks) {
     item.dataset.blockId = block.id;
     
     if (block.type === 'image') {
-      // Image block - simple layout
-      const row = document.createElement('div');
-      row.className = 'element-row';
-      
-      const contentField = document.createElement('input');
-      contentField.className = 'element-content';
-      contentField.type = 'text';
-      contentField.value = 'Image';
-      contentField.readOnly = true;
+      // Image block - header with type and delete, then large field
+      const header = document.createElement('div');
+      header.className = 'element-header';
       
       const typeSelector = document.createElement('select');
       typeSelector.className = 'element-type';
@@ -113,30 +107,22 @@ export function updateBlockList(blocks) {
       deleteBtn.textContent = '×';
       deleteBtn.onclick = () => window.deleteBlock(block.id);
       
-      row.appendChild(contentField);
-      row.appendChild(typeSelector);
-      row.appendChild(deleteBtn);
-      item.appendChild(row);
+      header.appendChild(typeSelector);
+      header.appendChild(deleteBtn);
+      
+      const contentField = document.createElement('input');
+      contentField.className = 'element-content';
+      contentField.type = 'text';
+      contentField.value = 'Image';
+      contentField.readOnly = true;
+      
+      item.appendChild(header);
+      item.appendChild(contentField);
       
     } else {
-      // Text block - simple layout with editable content
-      const row = document.createElement('div');
-      row.className = 'element-row';
-      
-      const contentInput = document.createElement('input');
-      contentInput.className = 'element-content';
-      contentInput.type = 'text';
-      contentInput.value = block.content;
-      contentInput.placeholder = 'Enter text...';
-      
-      // Debounced content update
-      let updateTimeout;
-      contentInput.oninput = (e) => {
-        clearTimeout(updateTimeout);
-        updateTimeout = setTimeout(() => {
-          updateBlockContent(block.id, e.target.value);
-        }, 300);
-      };
+      // Text block - header with type and delete, then large editable field
+      const header = document.createElement('div');
+      header.className = 'element-header';
       
       const typeSelector = document.createElement('select');
       typeSelector.className = 'element-type';
@@ -154,10 +140,26 @@ export function updateBlockList(blocks) {
       deleteBtn.textContent = '×';
       deleteBtn.onclick = () => window.deleteBlock(block.id);
       
-      row.appendChild(contentInput);
-      row.appendChild(typeSelector);
-      row.appendChild(deleteBtn);
-      item.appendChild(row);
+      header.appendChild(typeSelector);
+      header.appendChild(deleteBtn);
+      
+      const contentInput = document.createElement('input');
+      contentInput.className = 'element-content';
+      contentInput.type = 'text';
+      contentInput.value = block.content;
+      contentInput.placeholder = 'Enter text...';
+      
+      // Debounced content update
+      let updateTimeout;
+      contentInput.oninput = (e) => {
+        clearTimeout(updateTimeout);
+        updateTimeout = setTimeout(() => {
+          updateBlockContent(block.id, e.target.value);
+        }, 300);
+      };
+      
+      item.appendChild(header);
+      item.appendChild(contentInput);
     }
     
     listEl.appendChild(item);
