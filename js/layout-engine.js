@@ -121,8 +121,8 @@ export function subdivide(items, dir) {
   }
   
   // Split items into two groups at calculated point
-  const sectionA = items.slice(0, sizeA);
-  const sectionB = items.slice(sizeA);
+  const sectionA = items.slice(0, optimalSplit);
+  const sectionB = items.slice(optimalSplit);
   
   // Calculate weight-based ratio between the two sections
   const ratio = getWeightBasedRatio(sectionA, sectionB);
