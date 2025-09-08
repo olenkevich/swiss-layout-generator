@@ -37,7 +37,7 @@ export function addImageBlock(blocks, updateBlockList, render) {
   
   const id = generateId();
   const imageSrc = URL.createObjectURL(file);
-  const preserveAspect = document.getElementById("preserveAspect").checked;
+  const preserveAspect = true; // Default to preserve aspect, user can change via dropdown
   
   // Create image element to get dimensions
   const img = new Image();
@@ -63,14 +63,6 @@ export function addImageBlock(blocks, updateBlockList, render) {
     
     updateBlockList();
     render();
-    
-    // Check if "Use image colors" is enabled
-    const useImageColors = document.getElementById("useImageColors").checked;
-    
-    if (useImageColors) {
-      // Simple color extraction for uploaded images
-      console.log('Image color extraction would happen here');
-    }
   };
   
   img.src = imageSrc;
@@ -89,6 +81,15 @@ export function changeBlockType(blockId, newType, blocks, updateBlockList, rende
   const block = blocks.find(b => b.id === blockId);
   if (block) {
     block.type = newType;
+    updateBlockList();
+    render();
+  }
+}
+
+export function changeImageAspect(blockId, preserveAspect, blocks, updateBlockList, render) {
+  const block = blocks.find(b => b.id === blockId);
+  if (block && block.type === 'image') {
+    block.preserveAspect = preserveAspect;
     updateBlockList();
     render();
   }
@@ -114,17 +115,23 @@ export function updateBlockList(blocks) {
       const header = document.createElement('div');
       header.className = 'element-header';
       
-      const typeSelector = document.createElement('select');
-      typeSelector.className = 'element-type';
-      typeSelector.innerHTML = '<option value="image" selected>Image</option>';
-      typeSelector.disabled = true;
+      const aspectSelector = document.createElement('select');
+      aspectSelector.className = 'element-type';
+      aspectSelector.innerHTML = `
+        <option value="preserve" ${block.preserveAspect ? 'selected' : ''}>Preserve Aspect</option>
+        <option value="crop" ${!block.preserveAspect ? 'selected' : ''}>Crop to Fit</option>
+      `;
+      
+      aspectSelector.onchange = () => {
+        window.changeImageAspect(block.id, aspectSelector.value === 'preserve');
+      };
       
       const deleteBtn = document.createElement('button');
       deleteBtn.className = 'element-delete';
       deleteBtn.textContent = '×';
       deleteBtn.onclick = () => window.deleteBlock(block.id);
       
-      header.appendChild(typeSelector);
+      header.appendChild(aspectSelector);
       header.appendChild(deleteBtn);
       
       const contentField = document.createElement('input');

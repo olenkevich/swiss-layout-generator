@@ -9,6 +9,7 @@ import {
   addImageBlock, 
   deleteBlock, 
   changeBlockType, 
+  changeImageAspect,
   updateBlockList, 
   handleStyleChange,
   updateClock
@@ -107,6 +108,10 @@ function _changeBlockType(blockId, newType) {
   changeBlockType(blockId, newType, blocks, _updateBlockList, render);
 }
 
+function _changeImageAspect(blockId, preserveAspect) {
+  changeImageAspect(blockId, preserveAspect, blocks, _updateBlockList, render);
+}
+
 function _generateWithAI() {
   generateWithAI(blocks, _updateBlockList, render);
 }
@@ -123,6 +128,7 @@ function initialize() {
   window.addImageBlock = _addImageBlock;
   window.deleteBlock = _deleteBlock;
   window.changeBlockType = _changeBlockType;
+  window.changeImageAspect = _changeImageAspect;
   window.generateWithAI = _generateWithAI;
   window.render = render;
   window.shuffleColors = shuffleColors;
