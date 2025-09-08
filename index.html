@@ -22,28 +22,25 @@
   
   <!-- Left controls -->
   <div class="sidebar">
-    <!-- AI Generation - Hero Section -->
-    <section class="sidebar-section hero-section">
+    <!-- AI Generate -->
+    <section class="section">
       <h2>AI Generate</h2>
       <textarea id="aiPrompt" placeholder="Describe your design idea...">Design a minimalist concert poster for jazz festival with vintage typography</textarea>
       
-      <div class="style-selector">
-        <label>Style</label>
-        <select id="styleSelect" onchange="handleStyleChange()">
-          <option value="b7f1e039-5fb5-47fa-b46e-d886bc87e36c">Style 1</option>
-          <option value="402084c3-fbb5-4fe1-8a32-ecdfd3463a39">Style 2</option>
-          <option value="72b21ce1-77f0-466e-877a-c3c6bb708e0c">Style 3</option>
-          <option value="e85e0f16-e82e-4053-8080-ffd55fa8ecb6">Style 4</option>
-          <option value="226190a0-5c43-4e0c-98a0-1a4ba63800cd">Style 5</option>
-          <option value="41501ef8-26a6-4d1c-946c-d8b659ff11c3">Style 6</option>
-          <option value="custom">Custom Style ID</option>
-        </select>
-        <input id="customStyleId" type="text" placeholder="Enter custom style ID..." class="custom-style-input">
-      </div>
+      <label>Style</label>
+      <select id="styleSelect" onchange="handleStyleChange()">
+        <option value="b7f1e039-5fb5-47fa-b46e-d886bc87e36c">Style 1</option>
+        <option value="402084c3-fbb5-4fe1-8a32-ecdfd3463a39">Style 2</option>
+        <option value="72b21ce1-77f0-466e-877a-c3c6bb708e0c">Style 3</option>
+        <option value="e85e0f16-e82e-4053-8080-ffd55fa8ecb6">Style 4</option>
+        <option value="226190a0-5c43-4e0c-98a0-1a4ba63800cd">Style 5</option>
+        <option value="41501ef8-26a6-4d1c-946c-d8b659ff11c3">Style 6</option>
+        <option value="custom">Custom Style ID</option>
+      </select>
+      <input id="customStyleId" type="text" placeholder="Enter custom style ID..." class="custom-style-input">
       
-      <button onclick="generateWithAI()" id="generateBtn" class="btn-primary">Generate Design</button>
+      <button onclick="generateWithAI()" id="generateBtn" class="button primary">Generate</button>
       
-      <!-- Status indicators -->
       <div id="aiStatus" class="status-box status-loading">
         <div id="statusText">Preparing...</div>
         <div id="statusProgress" class="progress-bar">
@@ -53,92 +50,67 @@
       
       <div id="aiError" class="status-box status-error">
         <div id="errorText"></div>
-        <button onclick="retryGeneration()" id="retryBtn" class="btn-retry">Retry</button>
+        <button onclick="retryGeneration()" id="retryBtn" class="button">Retry</button>
       </div>
     </section>
     
     <!-- Canvas Elements -->
-    <section class="sidebar-section">
-      <h3>Canvas Elements</h3>
-      <div id="blockList" class="element-list"></div>
+    <section class="section">
+      <h2>Elements</h2>
+      <div id="blockList"></div>
     </section>
     
-    <!-- Layout Controls -->
-    <section class="sidebar-section">
-      <h3>Layout</h3>
-      <div class="control-group">
-        <label>Format</label>
-        <select id="format">
-          <option value="16-9" selected>16:9 Landscape</option>
-          <option value="1-1">1:1 Square</option>
-          <option value="a4">A4 Portrait</option>
-          <option value="a4landscape">A4 Landscape</option>
-        </select>
-      </div>
+    <!-- Layout -->
+    <section class="section">
+      <h2>Layout</h2>
+      <label>Format</label>
+      <select id="format">
+        <option value="16-9" selected>16:9</option>
+        <option value="1-1">1:1</option>
+        <option value="a4">A4 Portrait</option>
+        <option value="a4landscape">A4 Landscape</option>
+      </select>
       
-      <div class="action-buttons">
-        <button onclick="render()" class="btn-secondary">Recompose</button>
-        <button onclick="shuffleColors()" id="shuffleBtn" class="btn-tertiary">Shuffle Colors</button>
-      </div>
+      <button onclick="render()" class="button">Recompose</button>
+      <button onclick="shuffleColors()" id="shuffleBtn" class="button">Shuffle Colors</button>
     </section>
     
-    <!-- Add Elements - Collapsible -->
-    <section class="sidebar-section collapsible">
-      <button class="section-toggle" onclick="toggleSection('add-elements')">
-        <h3>Add Elements</h3>
-        <span class="toggle-icon">−</span>
-      </button>
+    <!-- Add Elements -->
+    <section class="section">
+      <h2>Add Elements</h2>
       
-      <div id="add-elements" class="section-content">
-        <div class="add-group">
-          <label>Text Block</label>
-          <div class="input-row">
-            <input id="textContent" type="text" placeholder="Enter text...">
-            <select id="textType">
-              <option value="header">Header</option>
-              <option value="subheader">Subheader</option>
-              <option value="body">Body</option>
-              <option value="logo">Logo</option>
-            </select>
-          </div>
-          <button onclick="addTextBlock()" class="btn-tertiary">Add Text</button>
-        </div>
+      <label>Text</label>
+      <input id="textContent" type="text" placeholder="Enter text...">
+      <select id="textType">
+        <option value="header">Header</option>
+        <option value="body">Body</option>
+      </select>
+      <button onclick="addTextBlock()" class="button">Add Text</button>
 
-        <div class="add-group">
-          <label>Image</label>
-          <input id="imageFile" type="file" accept="image/*" onchange="addImageBlock()">
-          <div class="checkbox-group">
-            <label class="checkbox-label"><input id="useImageColors" type="checkbox" checked> Use image colors</label>
-            <label class="checkbox-label"><input id="preserveAspect" type="checkbox"> Preserve aspect</label>
-          </div>
-        </div>
-      </div>
+      <label>Image</label>
+      <input id="imageFile" type="file" accept="image/*" onchange="addImageBlock()">
+      <label><input id="useImageColors" type="checkbox" checked> Use image colors</label>
+      <label><input id="preserveAspect" type="checkbox"> Preserve aspect</label>
     </section>
 
-    <!-- Colors - Simplified -->
-    <section class="sidebar-section collapsible">
-      <button class="section-toggle" onclick="toggleSection('colors')">
-        <h3>Colors</h3>
-        <span class="toggle-icon">−</span>
-      </button>
-      
-      <div id="colors" class="section-content">
-        <div class="color-grid">
-          <div class="color-item">
-            <label>Background</label>
-            <input id="bgColor" type="color" value="#ffffff" onchange="applyColors()">
-          </div>
-          <div class="color-item">
-            <label>Text</label>
-            <input id="textColor" type="color" value="#111111" onchange="applyColors()">
-          </div>
-          <div class="color-item">
-            <label>Accent</label>
-            <input id="accentColor" type="color" value="#111111" onchange="applyColors()">
-          </div>
+    <!-- Colors -->
+    <section class="section">
+      <h2>Colors</h2>
+      <div class="colors">
+        <div>
+          <label>Background</label>
+          <input id="bgColor" type="color" value="#ffffff" onchange="applyColors()">
         </div>
-        <div id="colorPalette" class="color-palette"></div>
+        <div>
+          <label>Text</label>
+          <input id="textColor" type="color" value="#111111" onchange="applyColors()">
+        </div>
+        <div>
+          <label>Accent</label>
+          <input id="accentColor" type="color" value="#111111" onchange="applyColors()">
+        </div>
       </div>
+      <div id="colorPalette" class="color-palette"></div>
     </section>
   </div>
 

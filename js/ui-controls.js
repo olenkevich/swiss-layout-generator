@@ -83,83 +83,51 @@ export function updateBlockList(blocks) {
   listEl.innerHTML = '';
   
   if (blocks.length === 0) {
-    listEl.innerHTML = '<div class="empty-state">No elements yet</div>';
+    listEl.innerHTML = '<div class="empty-state">No elements</div>';
     return;
   }
   
   blocks.forEach(block => {
     const item = document.createElement('div');
-    item.className = 'block-item';
+    item.className = 'element-item';
     item.dataset.blockId = block.id;
     
     if (block.type === 'image') {
-      // Image block - stacked layout: main row (type + content), actions row (remove)
-      const mainRow = document.createElement('div');
-      mainRow.className = 'block-main-row';
+      // Image block - simple layout
+      const row = document.createElement('div');
+      row.className = 'element-row';
       
-      const typeLabel = document.createElement('div');
-      typeLabel.className = 'block-type';
-      typeLabel.textContent = 'IMG';
+      const contentField = document.createElement('input');
+      contentField.className = 'element-content';
+      contentField.type = 'text';
+      contentField.value = 'Image';
+      contentField.readOnly = true;
       
-      const contentField = document.createElement('div');
-      contentField.className = 'block-content';
-      contentField.textContent = 'Image element';
-      
-      mainRow.appendChild(typeLabel);
-      mainRow.appendChild(contentField);
-      
-      const actionsRow = document.createElement('div');
-      actionsRow.className = 'block-actions-row';
+      const typeSelector = document.createElement('select');
+      typeSelector.className = 'element-type';
+      typeSelector.innerHTML = '<option value="image" selected>Image</option>';
+      typeSelector.disabled = true;
       
       const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'block-remove';
+      deleteBtn.className = 'element-delete';
       deleteBtn.textContent = '×';
       deleteBtn.onclick = () => window.deleteBlock(block.id);
       
-      actionsRow.appendChild(deleteBtn);
-      
-      item.appendChild(mainRow);
-      item.appendChild(actionsRow);
+      row.appendChild(contentField);
+      row.appendChild(typeSelector);
+      row.appendChild(deleteBtn);
+      item.appendChild(row);
       
     } else {
-      // Text block - stacked layout: main row (type selector + content field), actions row (remove)
-      const mainRow = document.createElement('div');
-      mainRow.className = 'block-main-row';
+      // Text block - simple layout with editable content
+      const row = document.createElement('div');
+      row.className = 'element-row';
       
-      const typeSelector = document.createElement('select');
-      typeSelector.className = 'block-type-selector';
-      typeSelector.value = block.type;
-      
-      // Add type options
-      const typeOptions = [
-        { value: 'header', text: 'Header' },
-        { value: 'subheader', text: 'Subhead' },
-        { value: 'body', text: 'Body' },
-        { value: 'logo', text: 'Logo' },
-        { value: 'lead', text: 'Lead' },
-        { value: 'small', text: 'Small' },
-        { value: 'caption', text: 'Caption' }
-      ];
-      
-      typeOptions.forEach(opt => {
-        const option = document.createElement('option');
-        option.value = opt.value;
-        option.textContent = opt.text;
-        option.selected = opt.value === block.type;
-        typeSelector.appendChild(option);
-      });
-      
-      // Handle type change
-      typeSelector.onchange = () => {
-        window.changeBlockType(block.id, typeSelector.value);
-      };
-      
-      // Editable content field
       const contentInput = document.createElement('input');
-      contentInput.className = 'block-content-field';
+      contentInput.className = 'element-content';
       contentInput.type = 'text';
       contentInput.value = block.content;
-      contentInput.placeholder = 'Enter content...';
+      contentInput.placeholder = 'Enter text...';
       
       // Debounced content update
       let updateTimeout;
@@ -167,24 +135,29 @@ export function updateBlockList(blocks) {
         clearTimeout(updateTimeout);
         updateTimeout = setTimeout(() => {
           updateBlockContent(block.id, e.target.value);
-        }, 300); // 300ms debounce
+        }, 300);
       };
       
-      mainRow.appendChild(typeSelector);
-      mainRow.appendChild(contentInput);
+      const typeSelector = document.createElement('select');
+      typeSelector.className = 'element-type';
+      typeSelector.innerHTML = `
+        <option value="header" ${block.type === 'header' ? 'selected' : ''}>Header</option>
+        <option value="body" ${block.type === 'body' ? 'selected' : ''}>Body</option>
+      `;
       
-      const actionsRow = document.createElement('div');
-      actionsRow.className = 'block-actions-row';
+      typeSelector.onchange = () => {
+        window.changeBlockType(block.id, typeSelector.value);
+      };
       
       const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'block-remove';
+      deleteBtn.className = 'element-delete';
       deleteBtn.textContent = '×';
       deleteBtn.onclick = () => window.deleteBlock(block.id);
       
-      actionsRow.appendChild(deleteBtn);
-      
-      item.appendChild(mainRow);
-      item.appendChild(actionsRow);
+      row.appendChild(contentInput);
+      row.appendChild(typeSelector);
+      row.appendChild(deleteBtn);
+      item.appendChild(row);
     }
     
     listEl.appendChild(item);
@@ -221,68 +194,7 @@ export function handleStyleChange() {
   }
 }
 
-// Progressive disclosure functionality
-export function toggleSection(sectionId) {
-  const section = document.querySelector(`[data-section="${sectionId}"]`) || 
-                 document.getElementById(sectionId).closest('.collapsible');
-  
-  if (!section) return;
-  
-  const content = section.querySelector('.section-content');
-  const icon = section.querySelector('.toggle-icon');
-  
-  if (!content) return;
-  
-  const isCollapsed = section.classList.contains('collapsed');
-  
-  if (isCollapsed) {
-    // Expand
-    section.classList.remove('collapsed');
-    content.style.maxHeight = content.scrollHeight + 'px';
-    if (icon) icon.textContent = '−';
-    
-    // Remove max-height after animation completes
-    setTimeout(() => {
-      if (!section.classList.contains('collapsed')) {
-        content.style.maxHeight = 'none';
-      }
-    }, 300);
-  } else {
-    // Collapse
-    content.style.maxHeight = content.scrollHeight + 'px';
-    // Force reflow
-    content.offsetHeight;
-    content.style.maxHeight = '0px';
-    section.classList.add('collapsed');
-    if (icon) icon.textContent = '+';
-  }
-}
-
-// Initialize collapsible sections
-export function initializeCollapsibleSections() {
-  // Make toggleSection available globally
-  window.toggleSection = toggleSection;
-  
-  // Set up initial state - keep AI section expanded, others collapsed
-  const collapsibleSections = document.querySelectorAll('.collapsible');
-  
-  collapsibleSections.forEach((section, index) => {
-    const content = section.querySelector('.section-content');
-    const icon = section.querySelector('.toggle-icon');
-    
-    if (!content) return;
-    
-    // Collapse sections except the first one (or based on your preference)
-    if (index > 0) { // Keep first section (Add Elements) expanded for better UX
-      section.classList.add('collapsed');
-      content.style.maxHeight = '0px';
-      if (icon) icon.textContent = '+';
-    } else {
-      content.style.maxHeight = 'none';
-      if (icon) icon.textContent = '−';
-    }
-  });
-}
+// Simplified sections - no collapsible functionality needed
 
 // Legacy functions - simplified for basic functionality
 

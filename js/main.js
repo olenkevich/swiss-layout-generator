@@ -11,8 +11,7 @@ import {
   changeBlockType, 
   updateBlockList, 
   handleStyleChange,
-  updateClock,
-  initializeCollapsibleSections 
+  updateClock
 } from './ui-controls.js';
 
 // Application state
@@ -148,9 +147,6 @@ function initialize() {
   _setFormat(currentFormat);
   _updateBlockList();
   render();
-  
-  // Initialize collapsible sections
-  initializeCollapsibleSections();
   
   // Start clock
   updateClock();
