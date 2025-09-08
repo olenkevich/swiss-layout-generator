@@ -17,7 +17,8 @@ export function addTextBlock(blocks, updateBlockList, render) {
     id, 
     type, 
     content: content.trim(), 
-    size: 'large'
+    size: 'large',
+    sizeWeight: 2 // Default to Medium size
   };
   
   if (type === 'header') block.hero = true;
@@ -52,6 +53,7 @@ export function addImageBlock(blocks, updateBlockList, render) {
       type: 'image', 
       src: imageSrc, 
       size: 'large',
+      sizeWeight: 2, // Default to Medium size
       preserveAspect: preserveAspect,
       aspectRatio: aspectRatio,
       isLandscape: isLandscape,
@@ -95,6 +97,15 @@ export function changeImageAspect(blockId, preserveAspect, blocks, updateBlockLi
   }
 }
 
+export function changeElementSize(blockId, sizeWeight, blocks, updateBlockList, render) {
+  const block = blocks.find(b => b.id === blockId);
+  if (block) {
+    block.sizeWeight = sizeWeight;
+    updateBlockList();
+    render();
+  }
+}
+
 export function updateBlockList(blocks) {
   const listEl = document.getElementById('blockList');
   console.log('Updating block list, blocks:', blocks.length, blocks);
@@ -126,12 +137,27 @@ export function updateBlockList(blocks) {
         window.changeImageAspect(block.id, aspectSelector.value === 'preserve');
       };
       
+      const imageSizeSelector = document.createElement('select');
+      imageSizeSelector.className = 'element-type';
+      const imageCurrentWeight = block.sizeWeight || 2;
+      imageSizeSelector.innerHTML = `
+        <option value="1" ${imageCurrentWeight === 1 ? 'selected' : ''}>Small</option>
+        <option value="2" ${imageCurrentWeight === 2 ? 'selected' : ''}>Medium</option>
+        <option value="3" ${imageCurrentWeight === 3 ? 'selected' : ''}>Large</option>
+        <option value="4" ${imageCurrentWeight === 4 ? 'selected' : ''}>Hero</option>
+      `;
+      
+      imageSizeSelector.onchange = () => {
+        window.changeElementSize(block.id, parseInt(imageSizeSelector.value));
+      };
+      
       const deleteBtn = document.createElement('button');
       deleteBtn.className = 'element-delete';
       deleteBtn.textContent = '×';
       deleteBtn.onclick = () => window.deleteBlock(block.id);
       
       header.appendChild(aspectSelector);
+      header.appendChild(imageSizeSelector);
       header.appendChild(deleteBtn);
       
       const contentField = document.createElement('input');
@@ -162,12 +188,27 @@ export function updateBlockList(blocks) {
         window.changeBlockType(block.id, typeSelector.value);
       };
       
+      const sizeSelector = document.createElement('select');
+      sizeSelector.className = 'element-type';
+      const currentWeight = block.sizeWeight || 2;
+      sizeSelector.innerHTML = `
+        <option value="1" ${currentWeight === 1 ? 'selected' : ''}>Small</option>
+        <option value="2" ${currentWeight === 2 ? 'selected' : ''}>Medium</option>
+        <option value="3" ${currentWeight === 3 ? 'selected' : ''}>Large</option>
+        <option value="4" ${currentWeight === 4 ? 'selected' : ''}>Hero</option>
+      `;
+      
+      sizeSelector.onchange = () => {
+        window.changeElementSize(block.id, parseInt(sizeSelector.value));
+      };
+      
       const deleteBtn = document.createElement('button');
       deleteBtn.className = 'element-delete';
       deleteBtn.textContent = '×';
       deleteBtn.onclick = () => window.deleteBlock(block.id);
       
       header.appendChild(typeSelector);
+      header.appendChild(sizeSelector);
       header.appendChild(deleteBtn);
       
       const contentInput = document.createElement('input');

@@ -213,9 +213,9 @@ input[type=color] {
 
 .element-type {
   flex: 1;
-  min-width: 80px;
-  font-size: 14px;
-  padding: 8px;
+  min-width: 70px;
+  font-size: 13px;
+  padding: 6px 8px;
 }
 
 .element-delete {

@@ -10,6 +10,7 @@ import {
   deleteBlock, 
   changeBlockType, 
   changeImageAspect,
+  changeElementSize,
   updateBlockList, 
   handleStyleChange,
   updateClock
@@ -17,11 +18,11 @@ import {
 
 // Application state
 let blocks = [
-  {id: 'demo-header', type: 'header', content: 'Design Made Simple', hero: true, size: 'large'},
-  {id: 'demo-body', type: 'body', content: 'Create stunning layouts with our intelligent design generator. Perfect for presentations, social media, and creative projects.', size: 'large'},
-  {id: 'demo-subheader', type: 'subheader', content: 'Professional Results in Seconds', size: 'large'},
-  {id: 'demo-logo', type: 'logo', content: 'STUDIO', size: 'large'},
-  {id: 'demo-image', type: 'image', src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfMF8xKSIvPgo8ZGVmcz4KPGXPYW5lYXJHcmFkaWVudCBpZD0icGFpbnQwX2xpbmVhcl8wXzEiIHgxPSIwIiB5MT0iMCIgeDI9IjQwMCIgeTI9IjMwMCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjNjY2NkZGIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGNjZEQSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=', size: 'large'}
+  {id: 'demo-header', type: 'header', content: 'Design Made Simple', hero: true, size: 'large', sizeWeight: 2},
+  {id: 'demo-body', type: 'body', content: 'Create stunning layouts with our intelligent design generator. Perfect for presentations, social media, and creative projects.', size: 'large', sizeWeight: 2},
+  {id: 'demo-subheader', type: 'subheader', content: 'Professional Results in Seconds', size: 'large', sizeWeight: 2},
+  {id: 'demo-logo', type: 'logo', content: 'STUDIO', size: 'large', sizeWeight: 2},
+  {id: 'demo-image', type: 'image', src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfMF8xKSIvPgo8ZGVmcz4KPGXPYW5lYXJHcmFkaWVudCBpZD0icGFpbnQwX2xpbmVhcl8wXzEiIHgxPSIwIiB5MT0iMCIgeDI9IjQwMCIgeTI9IjMwMCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjNjY2NkZGIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGNjZEQSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=', size: 'large', sizeWeight: 2}
 ];
 
 // DOM elements
@@ -112,6 +113,10 @@ function _changeImageAspect(blockId, preserveAspect) {
   changeImageAspect(blockId, preserveAspect, blocks, _updateBlockList, render);
 }
 
+function _changeElementSize(blockId, sizeWeight) {
+  changeElementSize(blockId, sizeWeight, blocks, _updateBlockList, render);
+}
+
 function _generateWithAI() {
   generateWithAI(blocks, _updateBlockList, render);
 }
@@ -129,6 +134,7 @@ function initialize() {
   window.deleteBlock = _deleteBlock;
   window.changeBlockType = _changeBlockType;
   window.changeImageAspect = _changeImageAspect;
+  window.changeElementSize = _changeElementSize;
   window.generateWithAI = _generateWithAI;
   window.render = render;
   window.shuffleColors = shuffleColors;

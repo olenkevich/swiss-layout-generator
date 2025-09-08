@@ -41,24 +41,42 @@ export function getSmartDirection(blocks) {
   return 'col';
 }
 
-// Simplified ratio system - only 3 predictable ratios
+// Weight-based ratio calculation system
+export function getWeightBasedRatio(itemsA, itemsB) {
+  // Calculate total weights for each group
+  const weightA = itemsA.reduce((sum, item) => sum + (item.sizeWeight || 2), 0);
+  const weightB = itemsB.reduce((sum, item) => sum + (item.sizeWeight || 2), 0);
+  const totalWeight = weightA + weightB;
+  
+  // Convert to ratio (what portion does group A get)
+  const ratio = weightA / totalWeight;
+  
+  // Ensure reasonable bounds (don't let any section get too small)
+  const MIN_SECTION = 0.2;  // Minimum 20% for readability
+  const MAX_SECTION = 0.8;  // Maximum 80% to keep balance
+  
+  return Math.max(MIN_SECTION, Math.min(MAX_SECTION, ratio));
+}
+
+// Simplified ratio system - fallback for backward compatibility  
 export function getSmartRatio(items, hasHero) {
   const EQUAL = 0.5;       // Equal split - balanced
   const GOLDEN = 0.618;    // Golden ratio - pleasant asymmetry
-  const INVERSE = 0.382;   // Inverse golden - complementary asymmetry
   
   // Simple logic based on content priority
   const hasImages = items.some(item => item.type === 'image');
   const hasHeaders = items.some(item => item.type === 'header');
   
-  // Headers get priority space
-  if (hasHero || hasHeaders) {
-    return GOLDEN; // Header content gets 61.8% space
+  // Check for large elements (weight > 2)
+  const hasLargeElements = items.some(item => (item.sizeWeight || 2) > 2);
+  
+  if (hasLargeElements || hasHero || hasHeaders) {
+    return GOLDEN; // Priority content gets golden ratio space
   }
   
   // Images get priority space  
   if (hasImages) {
-    return GOLDEN; // Images get 61.8% space
+    return GOLDEN;
   }
   
   // Default to equal split for balanced layouts
@@ -68,76 +86,54 @@ export function getSmartRatio(items, hasHero) {
 export function subdivide(items, dir) {
   if (items.length === 1) return { kind: "leaf", item: items[0] };
   
-  // Simplified 2-item logic
+  // Weight-based 2-item logic
   if (items.length === 2) {
-    const hasImage = items.some(it => it.type === 'image');
-    const hasHeader = items.some(it => it.type === 'header' || it.hero);
-    
-    let ratio = 0.5; // Default equal
-    
-    // Priority content gets golden ratio space
-    if (hasHeader || hasImage) {
-      ratio = 0.618;
-    }
-    
-    // Give priority content the larger space (first position)
-    const priorityIndex = items.findIndex(it => 
-      it.type === 'image' || it.type === 'header' || it.hero
-    );
+    // Use weight-based calculation
+    const ratio = getWeightBasedRatio([items[0]], [items[1]]);
     
     return {
       kind: "split",
       direction: dir,
       ratio,
-      a: { kind: "leaf", item: items[priorityIndex >= 0 ? priorityIndex : 0] },
-      b: { kind: "leaf", item: items[priorityIndex >= 0 ? 1 - priorityIndex : 1] }
+      a: { kind: "leaf", item: items[0] },
+      b: { kind: "leaf", item: items[1] }
     };
   }
   
-  // Use standard subdivision for all items
-  const hero = items.some(it => it.hero);
-  const hasImages = items.some(it => it.type === 'image');
-  let ratio = getSmartRatio(items, hero);
-  const sizeA = Math.max(1, Math.min(items.length - 1, Math.round(items.length * ratio)));
+  // Weight-based subdivision for multiple items
+  // Sort items by weight (heaviest first) to prioritize placement
+  const sortedItems = [...items].sort((a, b) => (b.sizeWeight || 2) - (a.sizeWeight || 2));
   
-  // If we have images, try to place them in the larger section
-  if (hasImages && !hero) {
-    const images = items.filter(it => it.type === 'image');
-    const texts = items.filter(it => it.type !== 'image');
+  // Calculate optimal split point based on cumulative weights
+  const totalWeight = sortedItems.reduce((sum, item) => sum + (item.sizeWeight || 2), 0);
+  let cumulativeWeight = 0;
+  let optimalSplit = Math.ceil(items.length / 2); // Default to middle
+  
+  // Find split point where first group has roughly 40-70% of total weight
+  for (let i = 1; i < sortedItems.length; i++) {
+    cumulativeWeight += sortedItems[i - 1].sizeWeight || 2;
+    const ratio = cumulativeWeight / totalWeight;
     
-    // If ratio > 0.5, put images in section A (larger), otherwise in section B
-    if (ratio > 0.5) {
-      // Section A is larger - put images first, then fill with text
-      const sectionAItems = [...images, ...texts].slice(0, sizeA);
-      const sectionBItems = [...images, ...texts].slice(sizeA);
-      return {
-        kind: "split",
-        direction: dir,
-        ratio,
-        a: subdivide(sectionAItems, toggle(dir)),
-        b: subdivide(sectionBItems, toggle(dir))
-      };
-    } else {
-      // Section B is larger - arrange so images go to section B
-      const sectionAItems = texts.slice(0, sizeA);
-      const sectionBItems = [...images, ...texts.slice(sizeA)];
-      return {
-        kind: "split",
-        direction: dir,
-        ratio,
-        a: subdivide(sectionAItems, toggle(dir)),
-        b: subdivide(sectionBItems, toggle(dir))
-      };
+    if (ratio >= 0.4 && ratio <= 0.7) {
+      optimalSplit = i;
+      break;
     }
   }
   
-  // Default subdivision for non-image layouts or hero layouts
+  // Split items into two groups at calculated point
+  const sectionA = items.slice(0, sizeA);
+  const sectionB = items.slice(sizeA);
+  
+  // Calculate weight-based ratio between the two sections
+  const ratio = getWeightBasedRatio(sectionA, sectionB);
+  
+  // Recursively subdivide each section
   return {
     kind: "split",
     direction: dir,
     ratio,
-    a: subdivide(items.slice(0, sizeA), toggle(dir)),
-    b: subdivide(items.slice(sizeA), toggle(dir))
+    a: subdivide(sectionA, toggle(dir)),
+    b: subdivide(sectionB, toggle(dir))
   };
 }
 
