@@ -1,0 +1,124 @@
+/* Base styles - Typography system, variables, and resets */
+
+:root {
+  --canvas-w: 1600px; 
+  --canvas-h: 900px;
+  --gap: 6px; 
+  --bg: #fff; 
+  --ink: #111; 
+  --accent: #111;
+  
+  /* Typography System - Swiss/German Design Principles */
+  --baseline: 8px;
+  --type-scale-ratio: 1.618; /* Golden ratio */
+  
+  /* Font Sizes - Modular Scale */
+  --type-logo: 48px;      /* 48px - Strong brand presence */
+  --type-header: 64px;    /* 64px - Primary hierarchy */
+  --type-lead: 40px;      /* 40px - Secondary hierarchy */
+  --type-subheader: 32px; /* 32px - Tertiary hierarchy */
+  --type-body: 24px;      /* 24px - Main body text */
+  --type-small: 18px;     /* 18px - Supporting text */
+  --type-caption: 14px;   /* 14px - Fine print */
+  
+  /* Line Heights - Optical Corrections */
+  --lh-tight: 1.1;        /* For large display text */
+  --lh-normal: 1.4;       /* For body text */
+  --lh-loose: 1.5;        /* For small text */
+  
+  /* Letter Spacing - Swiss Precision */
+  --ls-tight: -0.02em;    /* Condensed for headers */
+  --ls-normal: 0;         /* Natural for body */
+  --ls-loose: 0.05em;     /* Expanded for small text */
+  
+  /* Font Weights - Hierarchy Support */
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-bold: 600;
+  
+  /* Spacing Scale - Mathematical Progression */
+  --space-xs: calc(var(--baseline) * 1);   /* 8px - Base unit */
+  --space-sm: calc(var(--baseline) * 2);   /* 16px - 2:1 */
+  --space-md: calc(var(--baseline) * 3);   /* 24px - 3:1 */
+  --space-lg: calc(var(--baseline) * 5);   /* 40px - Fibonacci */
+  --space-xl: calc(var(--baseline) * 8);   /* 64px - Fibonacci */
+  --space-xxl: calc(var(--baseline) * 13); /* 104px - Fibonacci */
+  
+  /* Swiss/German Proportional Spacing */
+  --space-golden: calc(var(--baseline) * 6.18); /* ~49px - Golden ratio * 8 */
+  --space-silver: calc(var(--baseline) * 3.31); /* ~26px - Silver ratio * 8 */
+}
+
+/* Reset and base styles */
+html, body { 
+  height: 100%; 
+  margin: 0; 
+  font-family: Helvetica, Arial, sans-serif; 
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Swiss Typography Styles */
+.text { 
+  width: 100%; 
+  height: auto;
+  word-break: keep-all; 
+  overflow-wrap: normal; 
+  color: var(--ink);
+  text-align: left;
+  padding-bottom: var(--space-sm); /* 16px consistent baseline offset */
+  /* Ensure text can expand without clipping */
+  flex-shrink: 0;
+  min-height: fit-content;
+}
+
+.text[data-type="header"] { 
+  color: var(--accent);
+  font-weight: var(--fw-medium);     /* Medium for headers only */
+}
+
+.text[data-type="subheader"] {
+  font-weight: var(--fw-regular);    /* Regular */
+}
+
+.text[data-type="body"] {
+  font-weight: var(--fw-regular);    /* Regular */
+}
+
+.text[data-type="logo"] {
+  color: var(--accent);
+  font-weight: var(--fw-regular);    /* Regular */
+  text-transform: uppercase;
+  letter-spacing: var(--ls-loose);
+}
+
+/* Legacy logo class - updated with Swiss principles */
+.logo { 
+  font-weight: var(--fw-medium); 
+  font-size: var(--type-logo); 
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-tight);
+  padding-bottom: var(--space-sm); /* 16px consistent baseline offset */
+}
+
+.image { 
+  width: 100%; 
+  height: calc(100% - 8px); /* Reduced padding for larger images */
+  object-fit: cover; 
+  display: block; 
+  padding-bottom: 8px; /* Minimal baseline offset */
+}
+
+.image.preserve-aspect {
+  object-fit: contain;
+  height: auto;
+  max-height: calc(100% - 8px);
+}

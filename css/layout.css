@@ -1,0 +1,70 @@
+/* Layout Engine - Swiss Grid System */
+
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+/* Right preview panel */
+.preview {
+  flex: 1;
+  position: relative;          /* anchor for absolute #scaler */
+  background: #eee;
+  overflow: hidden;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+/* Absolutely centered scaler */
+#scaler {
+  position: absolute;
+  top: 50%; 
+  left: 50%;
+  transform-origin: center center; /* scale around center */
+}
+
+/* Fixed-size canvas (true logical size) */
+#canvas {
+  width: var(--canvas-w);
+  height: var(--canvas-h);
+  background: var(--bg);
+  box-shadow: 0 6px 30px rgba(0,0,0,.15);
+  padding: var(--gap);
+  display: flex;
+  /* Remove overflow hidden from canvas to prevent text clipping */
+  box-sizing: border-box;
+}
+
+/* Layout engine - Swiss Grid System */
+.row, .col { 
+  display: flex; 
+  gap: var(--space-sm); /* 16px - optimal content spacing */
+  flex: 1 1 0; 
+  min-width: 0; 
+  min-height: 0; 
+}
+
+.col { 
+  flex-direction: column; 
+}
+
+.row-reverse { 
+  flex-direction: row-reverse; 
+}
+
+.col-reverse { 
+  flex-direction: column-reverse; 
+}
+
+.leaf { 
+  flex: 1 1 0; 
+  min-width: 0; 
+  min-height: 0; 
+  padding: var(--space-md); /* 24px - generous content padding */
+  /* Remove overflow hidden to prevent text clipping */
+  display: flex;
+  align-items: center; /* Center alignment for better text positioning */
+  justify-content: center;
+  /* Ensure content can expand as needed */
+  box-sizing: border-box;
+}

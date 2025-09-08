@@ -30,6 +30,8 @@ export default async function handler(req, res) {
       throw new Error('RECRAFT_API_KEY environment variable is not set');
     }
     
+    console.log('Using Recraft API with key ending in:', process.env.RECRAFT_API_KEY.slice(-8));
+    
     const config = getRecraftConfig();
     
     const response = await fetch('https://external.api.recraft.ai/v1/images/generations', {
