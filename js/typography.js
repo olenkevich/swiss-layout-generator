@@ -59,29 +59,20 @@ export function fitText(container, el, item) {
   
   applyTypography();
   
-  // Swiss precision - maintain hierarchy while fitting, more flexible for headers
+  // Simplified fitting - maintain clear hierarchy
   const isHeader = item.type === 'header';
-  const minSize = isHeader ? 
-    Math.max(14, fontSize * 0.45) :  // Headers can shrink more but stay readable
-    Math.max(12, fontSize * 0.6);   // Other text maintains stricter limits
-  let guard = 100;
+  const minSize = isHeader ? 24 : 18; // Simple minimum sizes
+  let guard = 50; // Fewer iterations
   
   while (guard-- > 0 && fontSize > minSize) {
-    // More accurate overflow detection - check against actual container dimensions
-    // Use getBoundingClientRect for more precise measurements
-    const containerRect = container.getBoundingClientRect();
-    const textRect = el.getBoundingClientRect();
+    // Simple overflow check
+    const availableWidth = maxW - 48; // Account for padding (24px * 2)
+    const availableHeight = maxH - 48;
     
-    // Account for leaf padding (24px) and some safety margin
-    const safetyMargin = 8;
-    const availableWidth = maxW - safetyMargin;
-    const availableHeight = maxH - safetyMargin;
-    
-    // Check if text is overflowing the container
     const isOverflowing = el.scrollWidth > availableWidth || el.scrollHeight > availableHeight;
     if (!isOverflowing) break;
     
-    fontSize = Math.max(minSize, fontSize - 2); // Reduce in larger steps for efficiency
+    fontSize = Math.max(minSize, fontSize - 3); // Larger steps for efficiency
     applyTypography();
   }
   

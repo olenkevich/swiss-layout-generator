@@ -60,11 +60,9 @@
   flex: 1 1 0; 
   min-width: 0; 
   min-height: 0; 
-  padding: var(--space-md); /* 24px - generous content padding */
-  /* Remove overflow hidden to prevent text clipping */
+  padding: 24px; /* Consistent padding */
   display: flex;
-  align-items: center; /* Center alignment for better text positioning */
-  justify-content: center;
-  /* Ensure content can expand as needed */
+  align-items: flex-start; /* Top alignment for better text flow */
+  justify-content: flex-start; /* Left alignment for text */
   box-sizing: border-box;
 }

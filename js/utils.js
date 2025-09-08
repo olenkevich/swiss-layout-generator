@@ -1,25 +1,27 @@
 // Shared utility functions
 
-// Typography Scale - Swiss Design Hierarchy (Enhanced with 1.4x multiplier)
+// Simplified Typography Scale - Only 2 styles for clarity
 export const SCALE = { 
-  header: 120,    // Primary headlines - strong presence
-  subheader: 60,  // Secondary headlines - clear hierarchy  
-  body: 45,       // Main text - optimal readability
-  logo: 90,       // Brand identity - balanced prominence
-  lead: 75,       // Introductory text - intermediate hierarchy
-  small: 35,      // Supporting text - maintains legibility
-  caption: 28     // Fine print - compact but readable
+  header: 72,     // Clear header hierarchy
+  body: 36,       // Readable body text
+  // Legacy support
+  subheader: 36,  // Map to body
+  logo: 72,       // Map to header
+  lead: 36,       // Map to body
+  small: 36,      // Map to body
+  caption: 36     // Map to body
 };
 
-// Typography Properties - Swiss/German/Soviet Hierarchy
+// Simplified Typography Properties - Clear hierarchy
 export const TYPE_PROPS = {
-  header: { weight: 600, lineHeight: 1.1, letterSpacing: '-0.03em' },     // Bold for impact
-  subheader: { weight: 500, lineHeight: 1.2, letterSpacing: '-0.015em' }, // Medium hierarchy
-  body: { weight: 400, lineHeight: 1.4, letterSpacing: '0' },             // Regular readability
-  logo: { weight: 500, lineHeight: 1.1, letterSpacing: '-0.02em' },       // Medium brand presence
-  lead: { weight: 450, lineHeight: 1.3, letterSpacing: '-0.01em' },       // Slightly bold intro
-  small: { weight: 400, lineHeight: 1.5, letterSpacing: '0.015em' },      // Regular with space
-  caption: { weight: 400, lineHeight: 1.5, letterSpacing: '0.05em' }      // Extended fine print
+  header: { weight: 700, lineHeight: 1.2, letterSpacing: '-0.02em' },     // Strong headers
+  body: { weight: 400, lineHeight: 1.4, letterSpacing: '0' },             // Readable body
+  // Legacy mappings
+  subheader: { weight: 400, lineHeight: 1.4, letterSpacing: '0' },        // Map to body
+  logo: { weight: 700, lineHeight: 1.2, letterSpacing: '-0.02em' },       // Map to header
+  lead: { weight: 400, lineHeight: 1.4, letterSpacing: '0' },             // Map to body
+  small: { weight: 400, lineHeight: 1.4, letterSpacing: '0' },            // Map to body
+  caption: { weight: 400, lineHeight: 1.4, letterSpacing: '0' }           // Map to body
 };
 
 export const BASELINE = 8;

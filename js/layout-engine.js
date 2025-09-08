@@ -27,87 +27,56 @@ export function getSmartDirection(blocks) {
   return 'col';
 }
 
-// Smart ratio selection based on content importance
+// Simplified ratio system - only 3 predictable ratios
 export function getSmartRatio(items, hasHero) {
-  // Swiss/German mathematical ratios
-  const GOLDEN = 0.618;      // φ - Golden ratio
-  const SILVER = 0.414;      // √2-1 - Silver ratio  
-  const PERFECT_FIFTH = 0.6; // 3:5 - Musical harmony
-  const FIBONACCI_MAJOR = 0.618; // 8:13 Fibonacci
-  const FIBONACCI_MINOR = 0.382; // 5:13 Fibonacci
+  const EQUAL = 0.5;       // Equal split - balanced
+  const GOLDEN = 0.618;    // Golden ratio - pleasant asymmetry
+  const INVERSE = 0.382;   // Inverse golden - complementary asymmetry
   
-  // Hero content gets prominent space
-  if (hasHero) {
-    const heroRatios = [GOLDEN, SILVER + 0.2, PERFECT_FIFTH];
-    return heroRatios[Math.floor(Math.random() * heroRatios.length)];
-  }
-  
-  // Check content types for intelligent sizing
+  // Simple logic based on content priority
   const hasImages = items.some(item => item.type === 'image');
   const hasHeaders = items.some(item => item.type === 'header');
-  const textItems = items.filter(item => ['header', 'subheader', 'body'].includes(item.type));
   
-  // Images get more prominent space (2/3 ratios)
-  if (hasImages) {
-    const imageProminent = [
-      0.67,                 // 2:1 - Image gets 2/3
-      0.7,                  // 7:3 - Even more prominent
-      0.65,                 // 13:7 - Strong presence
-      0.75,                 // 3:1 - Very dominant
-      GOLDEN,               // 0.618 - Golden ratio
-      0.6                   // 3:2 - Moderate dominance
-    ];
-    return imageProminent[Math.floor(Math.random() * imageProminent.length)];
+  // Headers get priority space
+  if (hasHero || hasHeaders) {
+    return GOLDEN; // Header content gets 61.8% space
   }
   
-  // Content-agnostic ratios for text-only layouts
-  const allRatios = [
-    0.5,                    // Equal split
-    GOLDEN,                 // 0.618 - Golden ratio
-    1 - GOLDEN,             // 0.382 - Inverse golden
-    0.67,                   // 2:1 ratio
-    0.33,                   // 1:2 ratio  
-    PERFECT_FIFTH,          // 0.6 - Musical harmony
-    1 - PERFECT_FIFTH,      // 0.4 - Inverse
-    SILVER + 0.2,           // 0.614 - Silver variation
-    FIBONACCI_MINOR + 0.12  // 0.502 - Near equal
-  ];
+  // Images get priority space  
+  if (hasImages) {
+    return GOLDEN; // Images get 61.8% space
+  }
   
-  return allRatios[Math.floor(Math.random() * allRatios.length)];
+  // Default to equal split for balanced layouts
+  return EQUAL;
 }
 
 export function subdivide(items, dir) {
   if (items.length === 1) return { kind: "leaf", item: items[0] };
   
-  // For 2 items, create more layout variations
+  // Simplified 2-item logic
   if (items.length === 2) {
-    const hero = items.some(it => it.hero);
     const hasImage = items.some(it => it.type === 'image');
+    const hasHeader = items.some(it => it.type === 'header' || it.hero);
     
-    let ratios, flip;
+    let ratio = 0.5; // Default equal
     
-    if (hasImage) {
-      // Images get larger space - biased ratios
-      ratios = [0.65, 0.7, 0.67, 0.75, 0.6]; // Image gets 60-75%
-      // Find which item is the image and give it the larger space
-      const imageIndex = items.findIndex(it => it.type === 'image');
-      flip = imageIndex === 1; // If image is second, flip to give it larger space
-    } else if (hero) {
-      ratios = [0.65, 0.7, 0.6, 0.75]; // Hero variations
-      flip = Math.random() < 0.5; // Random for hero
-    } else {
-      ratios = [0.5, 0.618, 0.382, 0.55, 0.45, 0.6, 0.4]; // Non-hero variations
-      flip = Math.random() < 0.5; // Random for regular content
+    // Priority content gets golden ratio space
+    if (hasHeader || hasImage) {
+      ratio = 0.618;
     }
     
-    const ratio = ratios[Math.floor(Math.random() * ratios.length)];
+    // Give priority content the larger space (first position)
+    const priorityIndex = items.findIndex(it => 
+      it.type === 'image' || it.type === 'header' || it.hero
+    );
     
     return {
       kind: "split",
       direction: dir,
       ratio,
-      a: { kind: "leaf", item: items[flip ? 1 : 0] },
-      b: { kind: "leaf", item: items[flip ? 0 : 1] }
+      a: { kind: "leaf", item: items[priorityIndex >= 0 ? priorityIndex : 0] },
+      b: { kind: "leaf", item: items[priorityIndex >= 0 ? 1 - priorityIndex : 1] }
     };
   }
   
@@ -192,10 +161,9 @@ export function renderNode(node) {
   const wrap = document.createElement("div"); 
   wrap.className = node.direction === "row" ? "row" : "col";
   
-  // Simple random ratio assignment
-  const flip = Math.random() < 0.5;
-  const ratioA = flip ? node.ratio : 1 - node.ratio;
-  const ratioB = flip ? 1 - node.ratio : node.ratio;
+  // Consistent ratio assignment - no random flipping
+  const ratioA = node.ratio;
+  const ratioB = 1 - node.ratio;
   
   const a = document.createElement("div"); 
   a.className = node.direction === "row" ? "row" : "col"; 
