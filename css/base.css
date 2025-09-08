@@ -111,14 +111,38 @@ body {
 
 .image { 
   width: 100%; 
-  height: calc(100% - 8px); /* Reduced padding for larger images */
+  height: calc(100% - 16px); /* Account for padding */
   object-fit: cover; 
   display: block; 
-  padding-bottom: 8px; /* Minimal baseline offset */
+  margin-bottom: 8px; /* Minimal baseline offset */
 }
 
 .image.preserve-aspect {
   object-fit: contain;
   height: auto;
-  max-height: calc(100% - 8px);
+  max-height: calc(100% - 16px);
+  width: auto;
+  max-width: 100%;
+  /* Center the image if it doesn't fill the space */
+  margin: 0 auto 8px auto;
+  display: block;
+}
+
+/* Specific handling for different aspect ratios */
+.leaf.image-landscape {
+  /* Landscape images in preserve aspect mode */
+}
+
+.leaf.image-portrait {
+  /* Portrait images in preserve aspect mode */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.leaf.image-square {
+  /* Square images in preserve aspect mode */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

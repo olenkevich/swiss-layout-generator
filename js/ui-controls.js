@@ -39,24 +39,41 @@ export function addImageBlock(blocks, updateBlockList, render) {
   const imageSrc = URL.createObjectURL(file);
   const preserveAspect = document.getElementById("preserveAspect").checked;
   
-  blocks.push({
-    id, 
-    type: 'image', 
-    src: imageSrc, 
-    size: 'large',
-    preserveAspect: preserveAspect
-  });
+  // Create image element to get dimensions
+  const img = new Image();
+  img.onload = function() {
+    const aspectRatio = this.width / this.height;
+    const isLandscape = aspectRatio > 1;
+    const isPortrait = aspectRatio < 1;
+    const isSquare = Math.abs(aspectRatio - 1) < 0.1;
+    
+    blocks.push({
+      id, 
+      type: 'image', 
+      src: imageSrc, 
+      size: 'large',
+      preserveAspect: preserveAspect,
+      aspectRatio: aspectRatio,
+      isLandscape: isLandscape,
+      isPortrait: isPortrait,
+      isSquare: isSquare,
+      width: this.width,
+      height: this.height
+    });
+    
+    updateBlockList();
+    render();
+    
+    // Check if "Use image colors" is enabled
+    const useImageColors = document.getElementById("useImageColors").checked;
+    
+    if (useImageColors) {
+      // Simple color extraction for uploaded images
+      console.log('Image color extraction would happen here');
+    }
+  };
   
-  updateBlockList();
-  render();
-  
-  // Check if "Use image colors" is enabled
-  const useImageColors = document.getElementById("useImageColors").checked;
-  
-  if (useImageColors) {
-    // Simple color extraction for uploaded images
-    console.log('Image color extraction would happen here');
-  }
+  img.src = imageSrc;
 }
 
 export function deleteBlock(blockId, blocks, updateBlockList, render) {
@@ -113,7 +130,10 @@ export function updateBlockList(blocks) {
       const contentField = document.createElement('input');
       contentField.className = 'element-content';
       contentField.type = 'text';
-      contentField.value = 'Image';
+      const aspectText = block.preserveAspect ? 
+        ` (${block.width}×${block.height}, aspect preserved)` : 
+        ' (cropped to fit)';
+      contentField.value = 'Image' + aspectText;
       contentField.readOnly = true;
       
       item.appendChild(header);

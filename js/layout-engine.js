@@ -2,11 +2,25 @@
 
 import { toggle } from './utils.js';
 
-// Smart direction selection based on content
+// Smart direction selection based on content and image aspects
 export function getSmartDirection(blocks) {
-  const imageCount = blocks.filter(b => b.type === 'image').length;
+  const images = blocks.filter(b => b.type === 'image');
+  const imageCount = images.length;
   const textCount = blocks.filter(b => ['header', 'subheader', 'body'].includes(b.type)).length;
-  const hasLogo = blocks.some(b => b.type === 'logo');
+  
+  // Check image aspect ratios for layout decisions
+  const hasLandscapeImage = images.some(img => img.preserveAspect && img.isLandscape);
+  const hasPortraitImage = images.some(img => img.preserveAspect && img.isPortrait);
+  
+  // Portrait images work better in rows (horizontal layout) to give them width
+  if (hasPortraitImage && textCount >= 1) {
+    return 'row';
+  }
+  
+  // Landscape images can work well in columns (vertical stacking)
+  if (hasLandscapeImage && textCount >= 1) {
+    return 'col';
+  }
   
   // Text-heavy layouts work better in columns (vertical stacking)
   if (textCount > imageCount && textCount > 2) {
@@ -130,7 +144,20 @@ export function subdivide(items, dir) {
 export function renderNode(node) {
   if (node.kind === "leaf") {
     const el = document.createElement("div"); 
-    el.className = "leaf";
+    let className = "leaf";
+    
+    // Add aspect-specific classes for images
+    if (node.item.type === "image" && node.item.preserveAspect) {
+      if (node.item.isLandscape) {
+        className += " image-landscape";
+      } else if (node.item.isPortrait) {
+        className += " image-portrait";
+      } else if (node.item.isSquare) {
+        className += " image-square";
+      }
+    }
+    
+    el.className = className;
     
     if (["header", "subheader", "body"].includes(node.item.type)) {
       const t = document.createElement("div");
